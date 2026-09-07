@@ -351,21 +351,21 @@ export function FisioProSite() {
       <section className="content-section bg-black px-5 py-20 text-white md:px-10 md:py-28 lg:px-14 lg:py-36">
         <div className="mx-auto max-w-[1640px]">
           <p className="eyebrow text-white/50" data-reveal>Como enxergamos você</p>
-          <div className="mt-8 grid gap-10 lg:grid-cols-[1.3fr_.7fr] lg:items-end">
+          <div className="mt-8 grid gap-8 lg:grid-cols-[1.15fr_.85fr] lg:items-start lg:gap-16">
             <h2 className="max-w-5xl text-[clamp(3.1rem,7.5vw,8.6rem)] font-medium leading-[.84] tracking-[-0.07em]" data-reveal>
               Antes da lesão, existe uma pessoa.
             </h2>
-            <p className="max-w-lg text-base leading-8 text-white/55 lg:pb-3" data-reveal>
+            <p className="max-w-lg text-base leading-8 text-white/55 lg:pt-8" data-reveal>
               Esporte, trabalho, família e rotina fazem parte do plano. A reabilitação precisa devolver função sem afastar você de quem você é.
             </p>
           </div>
 
-          <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-[1.35fr_.65fr] md:gap-6">
-            <figure className="media-reveal h-[58svh] min-h-[440px] overflow-hidden" data-reveal>
-              <img src="/images/assessment-team.jpeg" alt="Equipe avaliando um jovem atleta" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+          <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2 md:gap-6">
+            <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden" data-reveal>
+              <img src="/images/assessment-team.jpeg" alt="Equipe avaliando um jovem atleta" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover object-[center_38%]" />
             </figure>
-            <figure className="media-reveal h-[48svh] min-h-[380px] overflow-hidden md:mt-28" data-reveal>
-              <img src="/images/functional-older.jpeg" alt="Treino funcional acompanhado por fisioterapeuta" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+            <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden" data-reveal>
+              <img src="/images/functional-older.jpeg" alt="Treino funcional acompanhado por fisioterapeuta" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover object-[center_38%]" />
             </figure>
           </div>
         </div>
@@ -386,8 +386,8 @@ export function FisioProSite() {
           </div>
 
           <div className="mt-14 grid gap-10 md:mt-20 md:grid-cols-3 md:gap-4 lg:gap-6">
-            {specialties.map((item, index) => (
-              <article key={item.number} className={`specialty-card ${index === 1 ? 'md:mt-20' : ''}`} data-reveal>
+            {specialties.map((item) => (
+              <article key={item.number} className="specialty-card" data-reveal>
                 <figure className="aspect-[4/5] overflow-hidden bg-black">
                   <img src={item.image} alt={item.alt} width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
                 </figure>
@@ -402,7 +402,7 @@ export function FisioProSite() {
         </div>
       </section>
 
-      <section className="immersive-story relative h-[100svh] bg-black text-white md:h-[120svh]" data-immersive>
+      <section className="immersive-story relative h-[100svh] bg-black text-white" data-immersive>
         <div className="sticky top-0 h-[100svh] overflow-hidden">
           <img
             src="/images/mobility-youth.jpeg"
@@ -491,14 +491,14 @@ export function FisioProSite() {
             </div>
           </div>
 
-          <div className="mt-14 grid grid-cols-2 gap-3 md:mt-20 md:grid-cols-12 md:gap-5">
-            <figure className="media-reveal col-span-2 h-[520px] overflow-hidden md:col-span-7 md:h-[760px]" data-reveal>
+          <div className="mt-14 grid gap-3 sm:grid-cols-3 md:mt-20 md:gap-5">
+            <figure className="media-reveal h-[420px] overflow-hidden md:h-[560px] lg:h-[620px]" data-reveal>
               <img src="/images/electrotherapy.jpeg" alt="Aplicação de eletroterapia durante atendimento" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             </figure>
-            <figure className="media-reveal col-span-1 h-72 overflow-hidden md:col-span-5 md:mt-24 md:h-[540px]" data-reveal>
+            <figure className="media-reveal h-[420px] overflow-hidden md:h-[560px] lg:h-[620px]" data-reveal>
               <img src="/images/equipment.jpeg" alt="Equipamentos clínicos da Fisio Pro" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             </figure>
-            <figure className="media-reveal col-span-1 h-72 overflow-hidden md:col-span-4 md:-mt-28 md:h-[480px]" data-reveal>
+            <figure className="media-reveal h-[420px] overflow-hidden md:h-[560px] lg:h-[620px]" data-reveal>
               <img src="/images/compression-care.jpeg" alt="Atendimento de recovery por compressão" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             </figure>
           </div>
@@ -563,7 +563,7 @@ export function FisioProSite() {
                 <p className="mt-1 text-sm text-white/58">Cuidado orientado por cada resposta do corpo.</p>
               </figcaption>
             </figure>
-            <figure className="team-portrait relative h-[64svh] min-h-[520px] max-h-[760px] overflow-hidden sm:mt-20" data-reveal>
+            <figure className="team-portrait relative h-[64svh] min-h-[520px] max-h-[760px] overflow-hidden" data-reveal>
               <img src="/images/therapist-rauny.jpeg" alt="Fisioterapeuta da equipe Fisio Pro" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover object-[center_18%]" />
               <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6 pt-28 text-white">
                 <p className="text-xl font-medium">Escuta e acompanhamento</p>
