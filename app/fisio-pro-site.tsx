@@ -122,9 +122,11 @@ export function FisioProSite() {
     const root = document.documentElement;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const revealItems = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+    revealItems.forEach((item) => item.classList.add('reveal-pending'));
     root.classList.add('motion-ready');
 
     let observer: IntersectionObserver | undefined;
+    let revealFallback = 0;
     if ('IntersectionObserver' in window && !reduceMotion) {
       observer = new IntersectionObserver(
         (entries) => {
@@ -135,9 +137,12 @@ export function FisioProSite() {
             }
           });
         },
-        { threshold: 0.08, rootMargin: '0px 0px -5% 0px' },
+        { threshold: 0.04, rootMargin: '180px 0px 180px 0px' },
       );
       revealItems.forEach((item) => observer?.observe(item));
+      revealFallback = window.setTimeout(() => {
+        revealItems.forEach((item) => item.classList.add('is-visible'));
+      }, 6000);
     } else {
       revealItems.forEach((item) => item.classList.add('is-visible'));
     }
@@ -182,7 +187,8 @@ export function FisioProSite() {
     updateScrollEffects();
     return () => {
       observer?.disconnect();
-      revealItems.forEach((item) => item.classList.remove('is-visible'));
+      window.clearTimeout(revealFallback);
+      revealItems.forEach((item) => item.classList.remove('is-visible', 'reveal-pending'));
       root.classList.remove('motion-ready');
       window.removeEventListener('scroll', updateScrollEffects);
       cancelAnimationFrame(animationFrame);
@@ -326,17 +332,16 @@ export function FisioProSite() {
 
             <figure className="method-visual relative min-h-[580px] overflow-hidden md:min-h-[760px]" data-reveal>
               <img
-                src="/images/treadmill.jpeg"
+                src="/images/treadmill-enhanced.webp"
                 alt="Fisioterapeuta acompanhando uma avaliação funcional"
-                width="1280"
-                height="854"
+                width="1536"
+                height="1024"
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 h-full w-full object-cover"
               />
-              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-black/80 to-transparent p-6 pt-28 text-white md:p-9">
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6 pt-28 text-white md:p-9">
                 <p className="max-w-xs text-sm leading-6 text-white/75">Avaliação funcional individual, do primeiro contato ao retorno completo.</p>
-                <span className="font-serif text-6xl italic text-white/80 md:text-8xl">01</span>
               </div>
             </figure>
           </div>
@@ -397,7 +402,7 @@ export function FisioProSite() {
         </div>
       </section>
 
-      <section className="immersive-story relative h-[100svh] bg-black text-white md:h-[155svh]" data-immersive>
+      <section className="immersive-story relative h-[100svh] bg-black text-white md:h-[120svh]" data-immersive>
         <div className="sticky top-0 h-[100svh] overflow-hidden">
           <img
             src="/images/mobility-youth.jpeg"
@@ -551,15 +556,15 @@ export function FisioProSite() {
             </p>
           </div>
           <div className="mt-14 grid gap-4 sm:grid-cols-2 md:mt-20 md:gap-6">
-            <figure className="team-portrait relative h-[72svh] min-h-[580px] overflow-hidden" data-reveal>
-              <img src="/images/therapist-giovanni.jpeg" alt="Fisioterapeuta da equipe Fisio Pro" width="1280" height="854" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+            <figure className="team-portrait relative h-[64svh] min-h-[520px] max-h-[760px] overflow-hidden" data-reveal>
+              <img src="/images/therapist-giovanni.jpeg" alt="Fisioterapeuta da equipe Fisio Pro" width="1280" height="854" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
               <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6 pt-28 text-white">
                 <p className="text-xl font-medium">Ciência e raciocínio clínico</p>
                 <p className="mt-1 text-sm text-white/58">Cuidado orientado por cada resposta do corpo.</p>
               </figcaption>
             </figure>
-            <figure className="team-portrait relative h-[72svh] min-h-[580px] overflow-hidden sm:mt-20" data-reveal>
-              <img src="/images/therapist-rauny.jpeg" alt="Fisioterapeuta da equipe Fisio Pro" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+            <figure className="team-portrait relative h-[64svh] min-h-[520px] max-h-[760px] overflow-hidden sm:mt-20" data-reveal>
+              <img src="/images/therapist-rauny.jpeg" alt="Fisioterapeuta da equipe Fisio Pro" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover object-[center_18%]" />
               <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6 pt-28 text-white">
                 <p className="text-xl font-medium">Escuta e acompanhamento</p>
                 <p className="mt-1 text-sm text-white/58">Presença em todas as etapas da evolução.</p>
@@ -653,7 +658,10 @@ export function FisioProSite() {
             </div>
           </div>
           <div className="flex flex-col justify-between gap-3 pt-6 text-[9px] font-semibold uppercase tracking-[0.14em] text-white/32 sm:flex-row">
-            <p>© 2026 Fisio Pro. Todos os direitos reservados.</p>
+            <p>
+              © 2026 Fisio Pro. Todos os direitos reservados.
+              <span className="mt-2 block sm:ml-4 sm:mt-0 sm:inline">Desenvolvido por <a href="https://amarotech.com.br/" target="_blank" rel="noreferrer" className="text-white/65 underline decoration-white/25 underline-offset-4 transition hover:text-white">Amaro Tech</a>.</span>
+            </p>
             <p>Fisioterapia • Reabilitação • Performance</p>
           </div>
         </div>
