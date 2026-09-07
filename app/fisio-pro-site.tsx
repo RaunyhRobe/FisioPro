@@ -53,6 +53,29 @@ const academyPillars = [
   ['Mentoria', 'Discussão de casos, raciocínio e desenvolvimento.'],
 ];
 
+const technologyItems = [
+  {
+    title: 'Avaliação funcional',
+    text: 'Análise detalhada de mobilidade, força, controle e padrões de movimento para identificar a origem da limitação e definir objetivos mensuráveis.',
+  },
+  {
+    title: 'Terapia manual',
+    text: 'Técnicas aplicadas de forma individual para reduzir desconfortos, recuperar mobilidade e preparar o corpo para voltar a se movimentar com segurança.',
+  },
+  {
+    title: 'Eletroterapia e laser',
+    text: 'Recursos utilizados como apoio ao tratamento para modular a dor, favorecer a recuperação tecidual e potencializar a resposta clínica quando indicados.',
+  },
+  {
+    title: 'Treinamento terapêutico',
+    text: 'Exercícios planejados e acompanhados para reconstruir força, estabilidade, coordenação e confiança nas atividades do dia a dia ou do esporte.',
+  },
+  {
+    title: 'Recovery',
+    text: 'Estratégias de recuperação, como compressão pneumática e mobilidade orientada, para controlar a fadiga e manter o corpo pronto para o próximo desafio.',
+  },
+];
+
 function ArrowLink({
   children,
   href,
@@ -82,6 +105,7 @@ function ArrowLink({
 export function FisioProSite() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [introDone, setIntroDone] = useState(false);
+  const [openTechnology, setOpenTechnology] = useState<number | null>(0);
   const galleryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -173,7 +197,7 @@ export function FisioProSite() {
   };
 
   return (
-    <main className="overflow-clip bg-background text-foreground">
+    <main className="bg-background text-foreground">
       <div className={`preloader ${
         introDone ? 'preloader-done' : ''
       }`} aria-hidden="true">
@@ -182,7 +206,7 @@ export function FisioProSite() {
           <span>REABILITAÇÃO & PERFORMANCE</span>
         </div>
         <div className="preloader-mark">
-          <img src="/images/mark-white.png" alt="" width="108" height="108" />
+          <img src="/images/logo-loader.webp" alt="Fisio Pro" width="900" height="381" />
           <p>Preparando o movimento</p>
         </div>
         <div className="preloader-bottom">
@@ -373,7 +397,7 @@ export function FisioProSite() {
         </div>
       </section>
 
-      <section className="immersive-story relative h-[155svh] bg-black text-white" data-immersive>
+      <section className="immersive-story relative h-[100svh] bg-black text-white md:h-[155svh]" data-immersive>
         <div className="sticky top-0 h-[100svh] overflow-hidden">
           <img
             src="/images/mobility-youth.jpeg"
@@ -435,13 +459,29 @@ export function FisioProSite() {
               <p className="max-w-xl text-base leading-8 text-black/62 md:text-lg">
                 A tecnologia amplia o olhar clínico, mas é a experiência humana que orienta cada escolha.
               </p>
-              <div className="mt-9 divide-y divide-black/15 border-y border-black/15">
-                {['Avaliação funcional', 'Terapia manual', 'Eletroterapia e laser', 'Treinamento terapêutico', 'Recovery'].map((item) => (
-                  <div key={item} className="flex items-center justify-between py-4 text-[11px] font-semibold uppercase tracking-[0.15em]">
-                    <span>{item}</span>
-                    <span className="text-black/30">+</span>
-                  </div>
-                ))}
+              <div className="technology-list mt-9 border-y border-black/15">
+                {technologyItems.map((item, index) => {
+                  const isOpen = openTechnology === index;
+                  return (
+                    <div key={item.title} className="technology-item border-b border-black/15 last:border-b-0">
+                      <button
+                        type="button"
+                        className="technology-trigger flex w-full items-center justify-between gap-5 py-5 text-left text-[11px] font-semibold uppercase tracking-[0.15em]"
+                        aria-expanded={isOpen}
+                        aria-controls={`technology-panel-${index}`}
+                        onClick={() => setOpenTechnology(isOpen ? null : index)}
+                      >
+                        <span>{item.title}</span>
+                        <span className={`technology-plus grid h-8 w-8 shrink-0 place-items-center rounded-full border border-black/20 text-base font-normal ${isOpen ? 'is-open' : ''}`} aria-hidden="true">+</span>
+                      </button>
+                      <div id={`technology-panel-${index}`} className={`technology-panel ${isOpen ? 'is-open' : ''}`}>
+                        <div>
+                          <p className="max-w-xl pb-6 pr-10 text-sm font-normal leading-6 tracking-normal text-black/58 normal-case md:text-base md:leading-7">{item.text}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

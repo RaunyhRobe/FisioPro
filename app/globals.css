@@ -87,7 +87,7 @@ body.intro-lock { overflow: hidden; }
   grid-template-rows: auto 1fr auto;
   padding: 1.25rem;
   color: white;
-  background: #050505;
+  background: #000;
   transform: translateY(0);
   visibility: visible;
   transition: transform .85s cubic-bezier(.76, 0, .24, 1), visibility 0s .85s;
@@ -120,7 +120,7 @@ body.intro-lock { overflow: hidden; }
 }
 
 .preloader-mark img {
-  width: clamp(4.75rem, 9vw, 7rem);
+  width: clamp(17rem, 44vw, 34rem);
   animation: loader-pulse 1.25s cubic-bezier(.4,0,.2,1) infinite alternate;
 }
 
@@ -228,6 +228,19 @@ body.intro-lock { overflow: hidden; }
 .journey-row { transition: padding-left .45s ease, background-color .45s ease; }
 .journey-row:hover { padding-left: 1rem; background: rgba(255,255,255,.15); }
 
+.technology-trigger { transition: opacity .3s ease; }
+.technology-trigger:hover { opacity: .55; }
+.technology-plus { transition: transform .4s cubic-bezier(.22,.75,.22,1), background-color .3s ease, color .3s ease; }
+.technology-plus.is-open { transform: rotate(45deg); background: #0b0b0b; color: #fff; }
+.technology-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows .45s cubic-bezier(.22,.75,.22,1), opacity .35s ease;
+}
+.technology-panel > div { overflow: hidden; }
+.technology-panel.is-open { grid-template-rows: 1fr; opacity: 1; }
+
 .immersive-image {
   object-position: 50% center;
   transform: scale(var(--scene-scale)) translateY(var(--scene-shift));
@@ -292,6 +305,7 @@ body.intro-lock { overflow: hidden; }
   .content-section { contain-intrinsic-size: 760px; }
   .preloader-top span:last-child { display: none; }
   .preloader-mark { margin-top: -2rem; }
+  .preloader-mark img { width: min(88vw, 24rem); }
   .site-header > a span { font-size: .64rem; }
   .hero-media { object-position: center 52%; }
   .hero-v2-shade {
@@ -301,6 +315,11 @@ body.intro-lock { overflow: hidden; }
   }
   .hero-copy h1 { text-wrap: balance; }
   .arrow-link { width: 100%; }
+  .motion-ready .media-reveal[data-reveal] {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+  }
   .method-visual { min-height: 70svh; }
   .method-visual img { object-position: 50% center; }
   .immersive-image { object-position: 56% center; }
