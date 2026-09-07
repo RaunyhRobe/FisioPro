@@ -1,53 +1,76 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import {
   ArrowDown,
-  ArrowRight,
   ArrowUpRight,
+  ChevronLeft,
+  ChevronRight,
   Menu,
-  MoveRight,
   X,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-const whatsapp = 'https://wa.me/5519971282430?text=Olá%2C%20gostaria%20de%20agendar%20uma%20avaliação%20na%20Fisio%20Pro.';
+const whatsapp =
+  'https://wa.me/5519971282430?text=Olá%2C%20gostaria%20de%20agendar%20uma%20avaliação%20na%20Fisio%20Pro.';
 
 const specialties = [
   {
-    index: '01',
+    number: '01',
     title: 'Fisioterapia esportiva',
-    text: 'Estratégias individualizadas para tratar lesões, recuperar potência e preparar um retorno seguro ao esporte.',
+    text: 'Tratamento, prevenção e retorno seguro ao esporte com progressão baseada na sua resposta.',
     image: '/images/mobility-youth.jpeg',
+    alt: 'Fisioterapia esportiva individualizada na Fisio Pro',
   },
   {
-    index: '02',
+    number: '02',
     title: 'Ortopedia e trauma',
-    text: 'Cuidado preciso para dores, limitações de movimento e reabilitação após lesões ou procedimentos cirúrgicos.',
+    text: 'Um plano preciso para recuperar mobilidade, força e confiança após lesões ou cirurgias.',
     image: '/images/ultrasound-treatment.jpeg',
+    alt: 'Tratamento ortopédico com tecnologia na Fisio Pro',
   },
   {
-    index: '03',
+    number: '03',
     title: 'Recovery & performance',
-    text: 'Recursos de recuperação e treino funcional para quem deseja evoluir com consistência, segurança e confiança.',
+    text: 'Estratégias de recuperação e treinamento terapêutico para sustentar sua melhor performance.',
     image: '/images/recovery-compression.jpeg',
+    alt: 'Sessão de recovery na Fisio Pro',
   },
 ];
 
-const process = [
-  ['01', 'Escuta', 'Entendemos sua história, rotina e o que você quer voltar a fazer.'],
-  ['02', 'Avaliação', 'Investigamos movimento, força e função para enxergar além do sintoma.'],
-  ['03', 'Estratégia', 'Construímos um plano claro, progressivo e adaptado à sua realidade.'],
-  ['04', 'Evolução', 'Acompanhamos cada resposta do corpo até a autonomia e a performance.'],
+const journey = [
+  ['01', 'Escutar', 'Sua história, sua rotina e o movimento que você quer recuperar.'],
+  ['02', 'Investigar', 'Uma avaliação funcional para entender a causa, não apenas o sintoma.'],
+  ['03', 'Construir', 'Um plano individual, claro e progressivo, feito para a sua realidade.'],
+  ['04', 'Evoluir', 'Acompanhamento contínuo até você se movimentar com autonomia.'],
 ];
 
-function ArrowLink({ children, href, inverse = false }: { children: React.ReactNode; href: string; inverse?: boolean }) {
+const academyPillars = [
+  ['Formação continuada', 'Conteúdo que aproxima ciência e prática clínica.'],
+  ['Workshops clínicos', 'Experiências aplicáveis à rotina profissional.'],
+  ['Mentoria', 'Discussão de casos, raciocínio e desenvolvimento.'],
+];
+
+function ArrowLink({
+  children,
+  href,
+  light = false,
+}: {
+  children: React.ReactNode;
+  href: string;
+  light?: boolean;
+}) {
   return (
     <a
       href={href}
-      className={`arrow-link group inline-flex items-center gap-5 rounded-full border px-5 py-3 text-[11px] font-medium uppercase tracking-[0.16em] transition duration-500 ${
-        inverse ? 'border-white/25 hover:bg-white hover:text-black' : 'border-black/25 hover:bg-black hover:text-white'
+      target={href.startsWith('http') ? '_blank' : undefined}
+      rel={href.startsWith('http') ? 'noreferrer' : undefined}
+      className={`arrow-link group inline-flex items-center justify-between gap-8 rounded-full border px-5 py-3.5 text-[10px] font-semibold uppercase tracking-[0.17em] transition duration-500 ${
+        light
+          ? 'border-white/30 hover:bg-white hover:text-black'
+          : 'border-black/25 hover:bg-black hover:text-white'
       }`}
     >
       {children}
@@ -58,104 +81,186 @@ function ArrowLink({ children, href, inverse = false }: { children: React.ReactN
 
 export function FisioProSite() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [introDone, setIntroDone] = useState(false);
+  const galleryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let lenis: Lenis | undefined;
-    let frame = 0;
+    const introTimer = window.setTimeout(() => setIntroDone(true), 1650);
+    return () => window.clearTimeout(introTimer);
+  }, []);
 
+  useEffect(() => {
+    document.body.classList.toggle('intro-lock', !introDone || menuOpen);
+    return () => document.body.classList.remove('intro-lock');
+  }, [introDone, menuOpen]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const revealItems = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+    root.classList.add('motion-ready');
+
+    let observer: IntersectionObserver | undefined;
+    if ('IntersectionObserver' in window && !reduceMotion) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer?.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.08, rootMargin: '0px 0px -5% 0px' },
+      );
+      revealItems.forEach((item) => observer?.observe(item));
+    } else {
+      revealItems.forEach((item) => item.classList.add('is-visible'));
+    }
+
+    const updateScrollEffects = () => {
+      const y = window.scrollY;
+      root.style.setProperty('--hero-shift', `${Math.min(y * 0.09, 90)}px`);
+      const scene = document.querySelector<HTMLElement>('[data-immersive]');
+      if (scene) {
+        const rect = scene.getBoundingClientRect();
+        const travel = Math.max(1, rect.height - window.innerHeight);
+        const progress = Math.min(1, Math.max(0, -rect.top / travel));
+        scene.style.setProperty('--scene-progress', progress.toFixed(3));
+        scene.style.setProperty('--scene-scale', (1.02 + progress * 0.08).toFixed(3));
+        scene.style.setProperty('--scene-shift', `${(progress * -20).toFixed(1)}px`);
+        scene.style.setProperty('--scene-copy-shift', `${((1 - progress) * 22).toFixed(1)}px`);
+        scene.style.setProperty('--scene-opacity', (0.58 + progress * 0.42).toFixed(3));
+        scene.style.setProperty('--scene-kicker-opacity', (0.42 + progress * 0.58).toFixed(3));
+        scene.style.setProperty('--scene-progress-width', `${(progress * 100).toFixed(1)}%`);
+      }
+    };
+
+    let lenis: Lenis | undefined;
+    let animationFrame = 0;
     if (!reduceMotion) {
       lenis = new Lenis({
-        duration: 1.15,
+        duration: 1.05,
         smoothWheel: true,
         anchors: true,
         easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       });
+      lenis.on('scroll', updateScrollEffects);
       const raf = (time: number) => {
         lenis?.raf(time);
-        frame = requestAnimationFrame(raf);
+        animationFrame = requestAnimationFrame(raf);
       };
-      frame = requestAnimationFrame(raf);
+      animationFrame = requestAnimationFrame(raf);
+    } else {
+      window.addEventListener('scroll', updateScrollEffects, { passive: true });
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add('is-visible')),
-      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
-    );
-    document.querySelectorAll('[data-reveal]').forEach((element) => observer.observe(element));
-
+    updateScrollEffects();
     return () => {
-      observer.disconnect();
-      cancelAnimationFrame(frame);
+      observer?.disconnect();
+      revealItems.forEach((item) => item.classList.remove('is-visible'));
+      root.classList.remove('motion-ready');
+      window.removeEventListener('scroll', updateScrollEffects);
+      cancelAnimationFrame(animationFrame);
       lenis?.destroy();
     };
   }, []);
 
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [menuOpen]);
-
-  const closeMenu = () => setMenuOpen(false);
+  const moveGallery = (direction: number) => {
+    const gallery = galleryRef.current;
+    if (!gallery) return;
+    gallery.scrollBy({ left: gallery.clientWidth * 0.82 * direction, behavior: 'smooth' });
+  };
 
   return (
     <main className="overflow-clip bg-background text-foreground">
-      <section className="hero-shell relative min-h-[100svh] overflow-hidden bg-black text-white">
-        <img
-          className="hero-image absolute inset-0 h-full w-full object-cover opacity-70"
-          src="/images/hero-space.jpeg"
-          alt="Espaço amplo de reabilitação e performance da Fisio Pro"
-        />
-        <div className="hero-shade absolute inset-0" />
+      <div className={`preloader ${
+        introDone ? 'preloader-done' : ''
+      }`} aria-hidden="true">
+        <div className="preloader-top">
+          <span>FISIO PRO</span>
+          <span>REABILITAÇÃO & PERFORMANCE</span>
+        </div>
+        <div className="preloader-mark">
+          <img src="/images/mark-white.png" alt="" width="108" height="108" />
+          <p>Preparando o movimento</p>
+        </div>
+        <div className="preloader-bottom">
+          <span className="preloader-line"><span /></span>
+          <span>100</span>
+        </div>
+      </div>
 
-        <header className="relative z-30 flex items-center justify-between px-5 py-5 md:px-10 md:py-7 lg:px-14">
-          <a href="#inicio" aria-label="Fisio Pro — início" className="flex items-center gap-3">
-            <img src="/images/mark-white.png" alt="" className="h-11 w-11 rounded-full object-cover" />
-            <span className="text-sm font-medium tracking-[0.24em]">FISIO PRO</span>
+      <header className="site-header absolute inset-x-0 top-0 z-40 flex items-center justify-between px-5 py-5 text-white md:px-10 md:py-7 lg:px-14">
+        <a href="#inicio" aria-label="Fisio Pro — início" className="flex items-center gap-3">
+          <img src="/images/mark-white.png" alt="" width="44" height="44" className="h-11 w-11 rounded-full object-cover" />
+          <span className="text-[12px] font-semibold tracking-[0.24em]">FISIO PRO</span>
+        </a>
+
+        <nav className="hidden items-center gap-9 text-[10px] font-semibold uppercase tracking-[0.17em] lg:flex" aria-label="Navegação principal">
+          <a href="#metodo" className="nav-link">Método</a>
+          <a href="#especialidades" className="nav-link">Especialidades</a>
+          <a href="#espaco" className="nav-link">O espaço</a>
+          <a href="#equipe" className="nav-link">Equipe</a>
+          <a href="#academy" className="nav-link">Academy</a>
+        </nav>
+
+        <div className="flex items-center gap-3">
+          <a
+            href={whatsapp}
+            target="_blank"
+            rel="noreferrer"
+            className="header-cta hidden items-center gap-3 rounded-full border border-white/35 bg-black/10 px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.15em] backdrop-blur-md transition hover:bg-white hover:text-black sm:flex"
+          >
+            Agendar avaliação <ArrowUpRight className="h-3.5 w-3.5" />
           </a>
+          <Button
+            type="button"
+            variant="ghost"
+            className="grid h-11 w-11 place-items-center rounded-full border border-white/35 bg-black/10 p-0 text-white backdrop-blur-md hover:bg-white hover:text-black lg:hidden"
+            aria-label="Abrir menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(true)}
+          >
+            <Menu className="h-4 w-4" />
+          </Button>
+        </div>
+      </header>
 
-          <nav className="hidden items-center gap-8 text-xs uppercase tracking-[0.16em] lg:flex" aria-label="Navegação principal">
-            <a href="#metodo" className="nav-link">Método</a>
-            <a href="#especialidades" className="nav-link">Especialidades</a>
-            <a href="#espaco" className="nav-link">O espaço</a>
-            <a href="#equipe" className="nav-link">Equipe</a>
-          </nav>
+      <section id="inicio" className="hero-v2 relative min-h-[100svh] overflow-hidden bg-black text-white">
+        <picture className="absolute inset-0">
+          <source media="(max-width: 767px)" srcSet="/images/hero-mobile-v2.webp" />
+          <img
+            className="hero-media h-full w-full object-cover"
+            src="/images/hero-desktop-v2.webp"
+            alt="Estrutura de reabilitação e performance da Fisio Pro"
+            width="1920"
+            height="1080"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+          />
+        </picture>
+        <div className="hero-v2-shade absolute inset-0" />
+        <div className="hero-grid absolute inset-0" aria-hidden="true" />
 
-          <div className="flex items-center gap-3">
-            <a
-              href={whatsapp}
-              target="_blank"
-              rel="noreferrer"
-              className="group hidden items-center gap-3 rounded-full border border-white/35 bg-white/5 px-5 py-2.5 text-[11px] uppercase tracking-[0.14em] backdrop-blur-md transition hover:bg-white hover:text-black sm:flex"
-            >
-              Agende sua avaliação
-              <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </a>
-            <button
-              type="button"
-              className="grid h-11 w-11 place-items-center rounded-full border border-white/35 bg-white/5 backdrop-blur-md lg:hidden"
-              aria-label="Abrir menu"
-              aria-expanded={menuOpen}
-              onClick={() => setMenuOpen(true)}
-            >
-              <Menu className="h-4 w-4" />
-            </button>
-          </div>
-        </header>
-
-        <div id="inicio" className="relative z-10 flex min-h-[calc(100svh-92px)] flex-col justify-end px-5 pb-8 md:px-10 md:pb-10 lg:px-14 lg:pb-12">
-          <p className="hero-kicker mb-4 text-[10px] uppercase tracking-[0.35em] text-white/70 md:text-xs">Fisioterapia • Reabilitação • Performance</p>
-          <h1 className="hero-title max-w-[1180px] text-[clamp(3.6rem,10.5vw,10.5rem)] font-medium leading-[0.78] tracking-[-0.065em]">
-            Movimento é
-            <span className="block font-serif font-normal italic tracking-[-0.04em]">liberdade.</span>
-          </h1>
-          <div className="hero-meta mt-8 flex items-end justify-between gap-6 border-t border-white/25 pt-5 md:mt-10">
-            <p className="max-w-md text-sm leading-relaxed text-white/75 md:text-base">
-              Cuidado preciso para você recuperar confiança, superar limites e voltar ao que faz a vida pulsar.
+        <div className="relative z-10 flex min-h-[100svh] flex-col justify-end px-5 pb-7 pt-28 md:px-10 md:pb-10 lg:px-14 lg:pb-12">
+          <div className="hero-copy">
+            <p className="mb-4 text-[9px] font-semibold uppercase tracking-[0.3em] text-white/70 md:text-[11px]">
+              Fisioterapia esportiva • Ortopedia • Recovery
             </p>
-            <a href="#metodo" className="group flex shrink-0 items-center gap-3 text-[10px] uppercase tracking-[0.2em] text-white/70">
-              <span className="hidden sm:inline">Descubra a Fisio Pro</span>
-              <span className="grid h-11 w-11 place-items-center rounded-full border border-white/30 transition group-hover:bg-white group-hover:text-black">
+            <h1 className="max-w-[1320px] text-[clamp(3.7rem,10vw,10.8rem)] font-medium leading-[0.78] tracking-[-0.072em]">
+              Movimento é
+              <span className="block font-serif font-normal italic tracking-[-0.055em]">liberdade.</span>
+            </h1>
+          </div>
+          <div className="mt-8 grid gap-6 border-t border-white/30 pt-5 md:mt-10 md:grid-cols-[1fr_auto] md:items-end">
+            <p className="max-w-md text-[13px] leading-6 text-white/76 md:text-base md:leading-7">
+              Recuperar o movimento é recuperar possibilidades. Aqui, ciência, estratégia e cuidado trabalham juntos para levar você adiante.
+            </p>
+            <a href="#metodo" className="group flex items-center justify-between gap-4 text-[9px] font-semibold uppercase tracking-[0.18em] text-white/75 md:text-[10px]">
+              Conheça a Fisio Pro
+              <span className="grid h-11 w-11 place-items-center rounded-full border border-white/35 transition group-hover:bg-white group-hover:text-black">
                 <ArrowDown className="h-4 w-4" />
               </span>
             </a>
@@ -163,260 +268,381 @@ export function FisioProSite() {
         </div>
       </section>
 
-      <div className="marquee-wrap border-y border-black/10 bg-[#ece9e2] py-4" aria-hidden="true">
-        <div className="marquee-track text-[11px] font-medium uppercase tracking-[0.28em]">
-          {Array.from({ length: 2 }).map((_, repetition) => (
-            <div className="flex shrink-0 items-center" key={repetition}>
+      <div className="marquee-wrap border-y border-black/10 bg-[#e5e1d8] py-4" aria-hidden="true">
+        <div className="marquee-track text-[10px] font-semibold uppercase tracking-[0.26em]">
+          {[0, 1].map((set) => (
+            <div className="flex shrink-0 items-center" key={set}>
               {['Ciência', 'Movimento', 'Cuidado', 'Performance', 'Autonomia', 'Resultado'].map((word) => (
-                <span className="flex items-center" key={`${repetition}-${word}`}><span className="mx-7 h-1 w-1 rounded-full bg-black" />{word}</span>
+                <span className="flex items-center" key={`${set}-${word}`}>
+                  <span className="mx-6 h-1 w-1 rounded-full bg-black" />
+                  {word}
+                </span>
               ))}
             </div>
           ))}
         </div>
       </div>
 
-      <section id="metodo" className="px-5 py-24 md:px-10 md:py-36 lg:px-14 lg:py-44">
-        <div className="mx-auto max-w-[1500px]">
-          <div className="grid gap-14 lg:grid-cols-[.65fr_1.35fr] lg:gap-20">
-            <div data-reveal className="reveal-up">
-              <p className="eyebrow">Nosso método</p>
-              <p className="mt-5 max-w-xs text-sm leading-7 text-black/58">
-                Não cuidamos apenas de uma dor. Cuidamos do movimento que conecta você à sua rotina, ao esporte e às pessoas.
-              </p>
-            </div>
-            <div data-reveal className="reveal-up">
-              <h2 className="display-copy text-[clamp(2.9rem,6.6vw,7.5rem)] font-medium leading-[.94] tracking-[-0.055em]">
-                Seu corpo não é um protocolo. <span className="font-serif font-normal italic text-black/45">É uma história em movimento.</span>
+      <section id="metodo" className="content-section bg-[#f2efe8] px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
+        <div className="mx-auto max-w-[1640px]">
+          <div className="grid items-start gap-10 lg:grid-cols-[.82fr_1.18fr] lg:gap-20">
+            <div className="method-copy lg:sticky lg:top-20">
+              <p className="eyebrow" data-reveal>Nosso método</p>
+              <h2 className="mt-6 max-w-[760px] text-[clamp(3rem,5.8vw,6.8rem)] font-medium leading-[.9] tracking-[-0.06em]" data-reveal>
+                Seu corpo não é um protocolo.
+                <span className="mt-2 block font-serif font-normal italic text-black/44">É uma história em movimento.</span>
               </h2>
-            </div>
-          </div>
-
-          <div className="mt-20 grid items-end gap-8 md:mt-32 md:grid-cols-[1.35fr_.65fr] md:gap-12">
-            <figure data-reveal className="reveal-image image-frame h-[60vh] min-h-[440px] overflow-hidden md:h-[760px]">
-              <img src="/images/treadmill.jpeg" alt="Avaliação funcional acompanhada por fisioterapeuta" className="h-full w-full object-cover" loading="lazy" />
-            </figure>
-            <div data-reveal className="reveal-up pb-3 md:pb-10">
-              <span className="font-serif text-7xl italic text-black/15 md:text-9xl">01</span>
-              <h3 className="mt-6 max-w-md text-2xl font-medium leading-tight tracking-[-0.03em] md:text-4xl">Escuta clínica, olhar humano e precisão em cada escolha.</h3>
-              <p className="mt-6 max-w-sm text-sm leading-7 text-black/60 md:text-base">
-                Avaliação individual, recursos tecnológicos e acompanhamento próximo se encontram em um plano construído para o seu momento.
+              <p className="mt-7 max-w-lg text-[15px] leading-7 text-black/62 md:text-lg md:leading-8" data-reveal>
+                A avaliação começa pela escuta e ganha profundidade no movimento. Cada decisão clínica é explicada, acompanhada e ajustada para você.
               </p>
-              <div className="mt-9"><ArrowLink href={whatsapp}>Comece sua jornada</ArrowLink></div>
+              <div className="mt-9" data-reveal>
+                <ArrowLink href={whatsapp}>Agendar minha avaliação</ArrowLink>
+              </div>
             </div>
+
+            <figure className="method-visual relative min-h-[580px] overflow-hidden md:min-h-[760px]" data-reveal>
+              <img
+                src="/images/treadmill.jpeg"
+                alt="Fisioterapeuta acompanhando uma avaliação funcional"
+                width="1280"
+                height="854"
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-black/80 to-transparent p-6 pt-28 text-white md:p-9">
+                <p className="max-w-xs text-sm leading-6 text-white/75">Avaliação funcional individual, do primeiro contato ao retorno completo.</p>
+                <span className="font-serif text-6xl italic text-white/80 md:text-8xl">01</span>
+              </div>
+            </figure>
           </div>
         </div>
       </section>
 
-      <section id="especialidades" className="bg-[#0a0a0a] px-5 py-24 text-white md:px-10 md:py-36 lg:px-14 lg:py-44">
-        <div className="mx-auto max-w-[1500px]">
-          <div className="mb-16 flex flex-col justify-between gap-8 md:mb-24 md:flex-row md:items-end">
-            <div data-reveal className="reveal-up">
-              <p className="eyebrow text-white/55">Especialidades</p>
-              <h2 className="mt-6 max-w-4xl text-[clamp(3.2rem,7vw,7rem)] font-medium leading-[.88] tracking-[-0.06em]">Cuidado que acompanha o seu ritmo.</h2>
-            </div>
-            <p data-reveal className="reveal-up max-w-sm text-sm leading-7 text-white/55 md:text-base">Da primeira avaliação ao retorno completo, cada etapa existe para devolver segurança ao seu movimento.</p>
+      <section className="content-section bg-black px-5 py-20 text-white md:px-10 md:py-28 lg:px-14 lg:py-36">
+        <div className="mx-auto max-w-[1640px]">
+          <p className="eyebrow text-white/50" data-reveal>Como enxergamos você</p>
+          <div className="mt-8 grid gap-10 lg:grid-cols-[1.3fr_.7fr] lg:items-end">
+            <h2 className="max-w-5xl text-[clamp(3.1rem,7.5vw,8.6rem)] font-medium leading-[.84] tracking-[-0.07em]" data-reveal>
+              Antes da lesão, existe uma pessoa.
+            </h2>
+            <p className="max-w-lg text-base leading-8 text-white/55 lg:pb-3" data-reveal>
+              Esporte, trabalho, família e rotina fazem parte do plano. A reabilitação precisa devolver função sem afastar você de quem você é.
+            </p>
           </div>
 
-          <div className="divide-y divide-white/15 border-y border-white/15">
-            {specialties.map((item) => (
-              <article key={item.index} data-reveal className="specialty-row reveal-up group grid gap-6 py-8 md:grid-cols-[80px_1fr_1fr_48px] md:items-center md:gap-8 md:py-10">
-                <span className="text-xs tracking-[0.2em] text-white/40">{item.index}</span>
-                <h3 className="text-3xl font-medium tracking-[-0.04em] md:text-5xl">{item.title}</h3>
-                <p className="max-w-md text-sm leading-7 text-white/55">{item.text}</p>
-                <span className="hidden h-11 w-11 place-items-center rounded-full border border-white/20 transition duration-500 group-hover:rotate-[-12deg] group-hover:bg-white group-hover:text-black md:grid"><ArrowUpRight className="h-4 w-4" /></span>
-                <div className="specialty-preview pointer-events-none absolute right-[18%] z-20 hidden h-64 w-48 overflow-hidden lg:block">
-                  <img src={item.image} alt="" className="h-full w-full object-cover" loading="lazy" />
+          <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-[1.35fr_.65fr] md:gap-6">
+            <figure className="media-reveal h-[58svh] min-h-[440px] overflow-hidden" data-reveal>
+              <img src="/images/assessment-team.jpeg" alt="Equipe avaliando um jovem atleta" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+            </figure>
+            <figure className="media-reveal h-[48svh] min-h-[380px] overflow-hidden md:mt-28" data-reveal>
+              <img src="/images/functional-older.jpeg" alt="Treino funcional acompanhado por fisioterapeuta" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section id="especialidades" className="content-section bg-[#f2efe8] px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
+        <div className="mx-auto max-w-[1640px]">
+          <div className="flex flex-col justify-between gap-7 md:flex-row md:items-end">
+            <div>
+              <p className="eyebrow" data-reveal>Especialidades</p>
+              <h2 className="mt-6 max-w-4xl text-[clamp(3rem,6.5vw,7.4rem)] font-medium leading-[.87] tracking-[-0.065em]" data-reveal>
+                Cuidado visível. Evolução real.
+              </h2>
+            </div>
+            <p className="max-w-sm text-sm leading-7 text-black/58 md:text-base" data-reveal>
+              Cada especialidade parte da mesma ideia: entender bem para cuidar melhor.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-10 md:mt-20 md:grid-cols-3 md:gap-4 lg:gap-6">
+            {specialties.map((item, index) => (
+              <article key={item.number} className={`specialty-card ${index === 1 ? 'md:mt-20' : ''}`} data-reveal>
+                <figure className="aspect-[4/5] overflow-hidden bg-black">
+                  <img src={item.image} alt={item.alt} width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+                </figure>
+                <div className="border-b border-black/20 pb-7 pt-5">
+                  <span className="text-[10px] font-semibold tracking-[0.18em] text-black/38">{item.number}</span>
+                  <h3 className="mt-3 text-2xl font-medium leading-tight tracking-[-0.035em] lg:text-3xl">{item.title}</h3>
+                  <p className="mt-4 text-sm leading-6 text-black/58">{item.text}</p>
                 </div>
               </article>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="mt-16 grid gap-5 md:grid-cols-[1.25fr_.75fr]">
-            <figure data-reveal className="reveal-image image-frame h-[480px] overflow-hidden md:h-[680px]">
-              <img src="/images/functional-older.jpeg" alt="Treino funcional individualizado na Fisio Pro" className="h-full w-full object-cover" loading="lazy" />
+      <section className="immersive-story relative h-[155svh] bg-black text-white" data-immersive>
+        <div className="sticky top-0 h-[100svh] overflow-hidden">
+          <img
+            src="/images/mobility-youth.jpeg"
+            alt="Atendimento individual para recuperar o movimento"
+            width="1280"
+            height="854"
+            loading="lazy"
+            decoding="async"
+            className="immersive-image absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="immersive-shade absolute inset-0" />
+          <div className="relative z-10 flex h-full flex-col justify-between px-5 py-7 md:px-10 md:py-10 lg:px-14">
+            <div className="flex items-center justify-between text-[9px] font-semibold uppercase tracking-[0.2em] text-white/65">
+              <span>O movimento transforma</span>
+              <span className="scene-counter">02 — 03</span>
+            </div>
+            <div>
+              <p className="immersive-kicker mb-4 text-[10px] uppercase tracking-[0.22em] text-white/65">Da limitação à possibilidade</p>
+              <blockquote className="immersive-title max-w-[1280px] text-[clamp(3.2rem,8vw,9rem)] font-medium leading-[.84] tracking-[-0.07em]">
+                Voltar não basta.
+                <span className="block font-serif font-normal italic">Volte melhor.</span>
+              </blockquote>
+              <div className="mt-7 h-px w-full bg-white/25"><span className="scene-progress block h-px bg-white" /></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="content-section bg-[#d9d4ca] px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
+        <div className="mx-auto grid max-w-[1640px] gap-12 lg:grid-cols-[.72fr_1.28fr] lg:gap-24">
+          <div className="lg:sticky lg:top-20 lg:self-start">
+            <p className="eyebrow" data-reveal>Uma jornada clara</p>
+            <h2 className="mt-6 max-w-xl text-[clamp(3rem,5vw,6rem)] font-medium leading-[.9] tracking-[-0.06em]" data-reveal>
+              Você entende cada próximo passo.
+            </h2>
+          </div>
+          <div className="border-t border-black/20">
+            {journey.map(([number, title, text]) => (
+              <article key={number} className="journey-row grid grid-cols-[44px_1fr] gap-3 border-b border-black/20 py-7 md:grid-cols-[64px_.6fr_1fr] md:gap-8 md:py-10" data-reveal>
+                <span className="pt-1 text-[10px] font-semibold tracking-[0.18em] text-black/38">{number}</span>
+                <h3 className="text-3xl font-medium tracking-[-0.04em] md:text-4xl">{title}</h3>
+                <p className="col-start-2 max-w-lg text-sm leading-7 text-black/60 md:col-start-auto md:text-base">{text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="content-section bg-[#f2efe8] px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
+        <div className="mx-auto max-w-[1640px]">
+          <div className="grid gap-10 lg:grid-cols-2 lg:gap-24">
+            <div>
+              <p className="eyebrow" data-reveal>Tecnologia com propósito</p>
+              <h2 className="mt-6 max-w-3xl text-[clamp(3rem,5.8vw,6.6rem)] font-medium leading-[.89] tracking-[-0.065em]" data-reveal>
+                Precisão para decidir. Presença para cuidar.
+              </h2>
+            </div>
+            <div className="lg:pt-24" data-reveal>
+              <p className="max-w-xl text-base leading-8 text-black/62 md:text-lg">
+                A tecnologia amplia o olhar clínico, mas é a experiência humana que orienta cada escolha.
+              </p>
+              <div className="mt-9 divide-y divide-black/15 border-y border-black/15">
+                {['Avaliação funcional', 'Terapia manual', 'Eletroterapia e laser', 'Treinamento terapêutico', 'Recovery'].map((item) => (
+                  <div key={item} className="flex items-center justify-between py-4 text-[11px] font-semibold uppercase tracking-[0.15em]">
+                    <span>{item}</span>
+                    <span className="text-black/30">+</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-14 grid grid-cols-2 gap-3 md:mt-20 md:grid-cols-12 md:gap-5">
+            <figure className="media-reveal col-span-2 h-[520px] overflow-hidden md:col-span-7 md:h-[760px]" data-reveal>
+              <img src="/images/electrotherapy.jpeg" alt="Aplicação de eletroterapia durante atendimento" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             </figure>
-            <figure data-reveal className="reveal-image image-frame h-[480px] overflow-hidden md:mt-28 md:h-[560px]">
-              <img src="/images/laser-foot.jpeg" alt="Tecnologia aplicada ao cuidado fisioterapêutico" className="h-full w-full object-cover" loading="lazy" />
+            <figure className="media-reveal col-span-1 h-72 overflow-hidden md:col-span-5 md:mt-24 md:h-[540px]" data-reveal>
+              <img src="/images/equipment.jpeg" alt="Equipamentos clínicos da Fisio Pro" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+            </figure>
+            <figure className="media-reveal col-span-1 h-72 overflow-hidden md:col-span-4 md:-mt-28 md:h-[480px]" data-reveal>
+              <img src="/images/compression-care.jpeg" alt="Atendimento de recovery por compressão" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             </figure>
           </div>
         </div>
       </section>
 
-      <section className="bg-[#d9d5cc] px-5 py-24 md:px-10 md:py-36 lg:px-14 lg:py-44">
-        <div className="mx-auto max-w-[1500px]">
-          <div className="grid gap-12 lg:grid-cols-[.72fr_1.28fr] lg:gap-20">
-            <div data-reveal className="reveal-up lg:sticky lg:top-24 lg:self-start">
-              <p className="eyebrow">Uma jornada clara</p>
-              <h2 className="mt-7 max-w-lg text-[clamp(3rem,5vw,5.5rem)] font-medium leading-[.92] tracking-[-0.055em]">Do incômodo à confiança.</h2>
-              <p className="mt-7 max-w-sm text-sm leading-7 text-black/60">Você entende o que está acontecendo, participa das decisões e percebe sua evolução em cada fase.</p>
+      <section id="espaco" className="content-section bg-black py-20 text-white md:py-28 lg:py-36">
+        <div className="px-5 md:px-10 lg:px-14">
+          <div className="mx-auto flex max-w-[1640px] flex-col justify-between gap-8 md:flex-row md:items-end">
+            <div>
+              <p className="eyebrow text-white/50" data-reveal>Nosso espaço</p>
+              <h2 className="mt-6 max-w-5xl text-[clamp(3rem,6.4vw,7.3rem)] font-medium leading-[.87] tracking-[-0.065em]" data-reveal>
+                Espaço para o corpo reencontrar confiança.
+              </h2>
             </div>
-            <div className="border-t border-black/20">
-              {process.map(([number, title, text]) => (
-                <article key={number} data-reveal className="reveal-up grid grid-cols-[52px_1fr] gap-4 border-b border-black/20 py-8 md:grid-cols-[70px_.55fr_1fr] md:gap-8 md:py-12">
-                  <span className="pt-2 text-xs tracking-[0.2em] text-black/40">{number}</span>
-                  <h3 className="text-3xl font-medium tracking-[-0.04em] md:text-4xl">{title}</h3>
-                  <p className="col-start-2 max-w-md text-sm leading-7 text-black/60 md:col-start-auto md:text-base">{text}</p>
-                </article>
+            <div className="flex gap-2" data-reveal>
+              <Button type="button" variant="ghost" className="h-11 w-11 rounded-full border border-white/25 p-0 text-white hover:bg-white hover:text-black" aria-label="Foto anterior" onClick={() => moveGallery(-1)}>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button type="button" variant="ghost" className="h-11 w-11 rounded-full border border-white/25 p-0 text-white hover:bg-white hover:text-black" aria-label="Próxima foto" onClick={() => moveGallery(1)}>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div ref={galleryRef} className="space-gallery mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 md:mt-20 md:gap-6 md:px-10 lg:px-14">
+          {[
+            ['/images/studio-panorama.jpeg', 'Vista panorâmica da estrutura Fisio Pro'],
+            ['/images/studio-wide.jpeg', 'Área completa de treinamento da Fisio Pro'],
+            ['/images/space-bw.jpeg', 'Detalhes dos equipamentos de treinamento'],
+            ['/images/studio-ground.jpeg', 'Estrutura funcional vista ao nível do solo'],
+          ].map(([src, alt], index) => (
+            <figure key={src} className={`gallery-slide media-reveal relative h-[62svh] min-h-[460px] shrink-0 snap-center overflow-hidden ${
+              index % 2 ? 'w-[72vw] md:w-[48vw]' : 'w-[86vw] md:w-[62vw]'
+            }`} data-reveal>
+              <img src={src} alt={alt} width="1280" height="854" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+              <span className="absolute bottom-5 left-5 text-[9px] font-semibold uppercase tracking-[0.17em] text-white drop-shadow md:bottom-7 md:left-7">0{index + 1} / 04</span>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      <section id="equipe" className="content-section bg-[#f2efe8] px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
+        <div className="mx-auto max-w-[1640px]">
+          <div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:gap-20">
+            <div>
+              <p className="eyebrow" data-reveal>Equipe Fisio Pro</p>
+              <h2 className="mt-6 text-[clamp(3rem,5.6vw,6.4rem)] font-medium leading-[.9] tracking-[-0.065em]" data-reveal>
+                Técnica que inspira confiança.
+              </h2>
+            </div>
+            <p className="max-w-2xl text-lg leading-8 text-black/58 lg:mt-24" data-reveal>
+              Profissionais que unem raciocínio clínico, atualização constante e atenção genuína à sua evolução.
+            </p>
+          </div>
+          <div className="mt-14 grid gap-4 sm:grid-cols-2 md:mt-20 md:gap-6">
+            <figure className="team-portrait relative h-[72svh] min-h-[580px] overflow-hidden" data-reveal>
+              <img src="/images/therapist-giovanni.jpeg" alt="Fisioterapeuta da equipe Fisio Pro" width="1280" height="854" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+              <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6 pt-28 text-white">
+                <p className="text-xl font-medium">Ciência e raciocínio clínico</p>
+                <p className="mt-1 text-sm text-white/58">Cuidado orientado por cada resposta do corpo.</p>
+              </figcaption>
+            </figure>
+            <figure className="team-portrait relative h-[72svh] min-h-[580px] overflow-hidden sm:mt-20" data-reveal>
+              <img src="/images/therapist-rauny.jpeg" alt="Fisioterapeuta da equipe Fisio Pro" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+              <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6 pt-28 text-white">
+                <p className="text-xl font-medium">Escuta e acompanhamento</p>
+                <p className="mt-1 text-sm text-white/58">Presença em todas as etapas da evolução.</p>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section id="academy" className="academy-v2 content-section bg-[#d9d4ca] px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
+        <div className="mx-auto grid max-w-[1640px] gap-12 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:gap-24">
+          <div className="academy-card flex min-h-[360px] items-center justify-center overflow-hidden bg-white p-7 md:min-h-[560px] md:p-12" data-reveal>
+            <img src="/images/logo-academy.jpg" alt="Fisio Pro Academy — Ciência, Ensino, Resultados" width="900" height="1600" loading="lazy" decoding="async" className="academy-logo w-full max-w-[620px] mix-blend-multiply" />
+          </div>
+          <div>
+            <p className="eyebrow" data-reveal>Fisio Pro Academy</p>
+            <h2 className="mt-6 max-w-3xl text-[clamp(3rem,5.5vw,6.4rem)] font-medium leading-[.9] tracking-[-0.065em]" data-reveal>
+              Conhecimento para transformar a prática.
+            </h2>
+            <p className="mt-7 max-w-xl text-base leading-8 text-black/62" data-reveal>
+              A Academy é o ambiente de formação da Fisio Pro: experiência clínica compartilhada com profundidade, método e aplicação.
+            </p>
+            <div className="mt-9 border-t border-black/20" data-reveal>
+              {academyPillars.map(([title, text], index) => (
+                <div key={title} className="grid grid-cols-[34px_1fr] gap-3 border-b border-black/20 py-5 md:grid-cols-[42px_.7fr_1fr] md:gap-5">
+                  <span className="text-[10px] font-semibold text-black/35">0{index + 1}</span>
+                  <h3 className="text-lg font-medium">{title}</h3>
+                  <p className="col-start-2 text-sm leading-6 text-black/55 md:col-start-auto">{text}</p>
+                </div>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="quote-section relative min-h-[92svh] overflow-hidden bg-black text-white">
-        <img src="/images/mobility-youth.jpeg" alt="Atendimento individual para evolução do movimento" className="absolute inset-0 h-full w-full object-cover opacity-65" loading="lazy" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,.1),rgba(0,0,0,.75))]" />
-        <div className="relative z-10 flex min-h-[92svh] flex-col justify-between px-5 py-8 md:px-10 md:py-12 lg:px-14">
-          <p className="eyebrow text-white/60">Fisio Pro</p>
-          <blockquote data-reveal className="reveal-up max-w-[1250px] text-[clamp(3rem,7.5vw,8rem)] font-medium leading-[.88] tracking-[-0.06em]">Voltar não basta. Queremos que você volte <span className="font-serif font-normal italic">melhor.</span></blockquote>
-        </div>
-      </section>
-
-      <section className="px-5 py-24 md:px-10 md:py-36 lg:px-14 lg:py-44">
-        <div className="mx-auto max-w-[1500px]">
-          <div className="grid gap-12 lg:grid-cols-2 lg:gap-24">
-            <div data-reveal className="reveal-up">
-              <p className="eyebrow">Tecnologia com propósito</p>
-              <h2 className="mt-7 max-w-2xl text-[clamp(3rem,5.8vw,6.4rem)] font-medium leading-[.91] tracking-[-0.06em]">Recursos modernos. Decisões humanas.</h2>
-            </div>
-            <div data-reveal className="reveal-up lg:pt-24">
-              <p className="max-w-lg text-lg leading-8 text-black/62">A tecnologia amplia o olhar clínico — nunca o substitui. Cada recurso é escolhido porque faz sentido para seu objetivo e para a fase atual do tratamento.</p>
-              <ul className="mt-10 divide-y divide-black/15 border-y border-black/15 text-sm uppercase tracking-[0.14em]">
-                {['Avaliação funcional', 'Terapia manual', 'Eletroterapia e laser', 'Treinamento terapêutico', 'Recovery'].map((item) => (
-                  <li key={item} className="flex items-center justify-between py-4"><span>{item}</span><MoveRight className="h-4 w-4 text-black/35" /></li>
-                ))}
-              </ul>
+            <div className="mt-9" data-reveal>
+              <ArrowLink href={`${whatsapp}%20Também%20quero%20saber%20sobre%20a%20Fisio%20Pro%20Academy.`}>Receber novidades da Academy</ArrowLink>
             </div>
           </div>
-          <div className="mt-16 grid grid-cols-2 gap-4 md:mt-24 md:grid-cols-12 md:gap-6">
-            <figure data-reveal className="reveal-image image-frame col-span-2 h-[480px] overflow-hidden md:col-span-7 md:h-[720px]">
-              <img src="/images/electrotherapy.jpeg" alt="Atendimento com eletroterapia" className="h-full w-full object-cover" loading="lazy" />
-            </figure>
-            <figure data-reveal className="reveal-image image-frame col-span-1 h-80 overflow-hidden md:col-span-5 md:mt-28 md:h-[510px]">
-              <img src="/images/equipment.jpeg" alt="Equipamentos de fisioterapia da clínica" className="h-full w-full object-cover" loading="lazy" />
-            </figure>
-            <figure data-reveal className="reveal-image image-frame col-span-1 h-80 overflow-hidden md:col-span-4 md:-mt-32 md:h-[500px]">
-              <img src="/images/compression-care.jpeg" alt="Sessão de recovery com compressão pneumática" className="h-full w-full object-cover" loading="lazy" />
-            </figure>
-          </div>
         </div>
       </section>
 
-      <section id="espaco" className="bg-white py-24 md:py-36 lg:py-44">
-        <div className="px-5 md:px-10 lg:px-14">
-          <div className="mx-auto mb-16 flex max-w-[1500px] flex-col justify-between gap-8 md:mb-24 md:flex-row md:items-end">
-            <div data-reveal className="reveal-up">
-              <p className="eyebrow">Nosso espaço</p>
-              <h2 className="mt-7 max-w-4xl text-[clamp(3.2rem,7vw,7.6rem)] font-medium leading-[.88] tracking-[-0.065em]">Amplo para evoluir. Próximo para acolher.</h2>
+      <section id="contato" className="closing-cta bg-[#f2efe8] px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
+        <div className="mx-auto max-w-[1640px]">
+          <p className="eyebrow" data-reveal>Seu próximo movimento começa aqui</p>
+          <h2 className="mt-8 max-w-[1450px] text-[clamp(3.4rem,9vw,10.4rem)] font-medium leading-[.8] tracking-[-0.075em]" data-reveal>
+            Pronto para voltar ao seu melhor?
+          </h2>
+          <div className="mt-14 grid gap-9 border-t border-black/20 pt-7 md:mt-20 md:grid-cols-[1fr_auto] md:items-end">
+            <div className="space-y-3" data-reveal>
+              <a href="tel:+5519971282430" className="block text-2xl font-medium tracking-[-0.03em] transition hover:opacity-55">(19) 97128-2430</a>
+              <a href="https://www.instagram.com/fisiopro19/" target="_blank" rel="noreferrer" className="inline-flex text-sm text-black/55 transition hover:text-black">@fisiopro19</a>
             </div>
-            <p data-reveal className="reveal-up max-w-sm text-sm leading-7 text-black/58">Ambiente completo para avaliação, tratamento e treinamento — com liberdade para o corpo se expressar.</p>
+            <div data-reveal><ArrowLink href={whatsapp}>Agendar avaliação</ArrowLink></div>
           </div>
-        </div>
-        <div data-reveal className="reveal-image h-[78svh] min-h-[560px] overflow-hidden">
-          <img src="/images/studio-panorama.jpeg" alt="Vista panorâmica da estrutura Fisio Pro" className="h-full w-full object-cover" loading="lazy" />
-        </div>
-        <div className="grid gap-4 px-5 pt-4 md:grid-cols-[.68fr_1.32fr] md:gap-6 md:px-10 md:pt-6 lg:px-14">
-          <figure data-reveal className="reveal-image image-frame h-[460px] overflow-hidden md:h-[620px]">
-            <img src="/images/space-bw.jpeg" alt="Detalhes da área de treinamento" className="h-full w-full object-cover" loading="lazy" />
-          </figure>
-          <figure data-reveal className="reveal-image image-frame h-[460px] overflow-hidden md:h-[620px]">
-            <img src="/images/studio-wide.jpeg" alt="Equipamentos na área funcional da Fisio Pro" className="h-full w-full object-cover" loading="lazy" />
-          </figure>
         </div>
       </section>
 
-      <section id="equipe" className="bg-[#0a0a0a] px-5 py-24 text-white md:px-10 md:py-36 lg:px-14 lg:py-44">
-        <div className="mx-auto max-w-[1500px]">
-          <div className="grid gap-12 lg:grid-cols-[.75fr_1.25fr] lg:gap-20">
-            <div data-reveal className="reveal-up">
-              <p className="eyebrow text-white/55">Equipe Fisio Pro</p>
-              <h2 className="mt-7 text-[clamp(3rem,5vw,6rem)] font-medium leading-[.92] tracking-[-0.06em]">Presença que transmite confiança.</h2>
+      <footer className="footer-v2 bg-black px-5 pb-8 pt-10 text-white md:px-10 md:pb-10 md:pt-14 lg:px-14">
+        <div className="mx-auto max-w-[1640px]">
+          <div className="grid gap-14 border-b border-white/15 pb-14 lg:grid-cols-[1.15fr_.85fr] lg:items-end">
+            <div>
+              <a href="#inicio" aria-label="Fisio Pro — voltar ao início" className="inline-flex items-center gap-4">
+                <img src="/images/mark-white.png" alt="" width="66" height="66" className="h-16 w-16 rounded-full" />
+                <span className="text-xl font-semibold tracking-[0.2em]">FISIO PRO</span>
+              </a>
+              <p className="mt-8 max-w-lg text-3xl font-medium leading-tight tracking-[-0.035em] text-white/80 md:text-5xl">
+                Ciência para mover.<br />Cuidado para evoluir.
+              </p>
             </div>
-            <p data-reveal className="reveal-up max-w-2xl text-xl leading-9 text-white/60 lg:mt-24">Profissionais que unem raciocínio clínico, atualização constante e uma vontade genuína de ver cada pessoa voltar ao seu melhor.</p>
-          </div>
-
-          <div className="mt-16 grid gap-5 sm:grid-cols-2 md:mt-24 md:gap-7">
-            <figure data-reveal className="team-card reveal-image relative h-[650px] overflow-hidden md:h-[800px]">
-              <img src="/images/therapist-giovanni.jpeg" alt="Fisioterapeuta da equipe Fisio Pro" className="h-full w-full object-cover" loading="lazy" />
-              <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-black/85 to-transparent px-6 pb-7 pt-24">
-                <div><p className="text-xl font-medium">Especialistas em movimento</p><p className="mt-1 text-sm text-white/55">Ciência, escuta e cuidado</p></div><ArrowUpRight className="h-5 w-5" />
-              </figcaption>
-            </figure>
-            <figure data-reveal className="team-card reveal-image relative h-[650px] overflow-hidden sm:mt-28 md:h-[800px]">
-              <img src="/images/therapist-rauny.jpeg" alt="Fisioterapeuta da equipe Fisio Pro" className="h-full w-full object-cover" loading="lazy" />
-              <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-black/85 to-transparent px-6 pb-7 pt-24">
-                <div><p className="text-xl font-medium">Atendimento próximo</p><p className="mt-1 text-sm text-white/55">Estratégia para cada história</p></div><ArrowUpRight className="h-5 w-5" />
-              </figcaption>
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      <section className="academy-section px-5 py-24 md:px-10 md:py-32 lg:px-14">
-        <div className="mx-auto grid max-w-[1500px] items-center gap-12 lg:grid-cols-[.9fr_1.1fr] lg:gap-24">
-          <div data-reveal className="reveal-up flex min-h-[360px] items-center justify-center bg-white p-8 md:min-h-[500px]">
-            <img src="/images/logo-academy.jpg" alt="Fisio Pro Academy — Ciência, Ensino, Resultados" className="academy-logo w-full max-w-xl mix-blend-multiply" loading="lazy" />
-          </div>
-          <div data-reveal className="reveal-up">
-            <p className="eyebrow">Fisio Pro Academy</p>
-            <h2 className="mt-7 max-w-2xl text-[clamp(3rem,5.5vw,6rem)] font-medium leading-[.92] tracking-[-0.06em]">Conhecimento que também se movimenta.</h2>
-            <p className="mt-8 max-w-lg text-base leading-8 text-black/60">Um braço da marca dedicado à troca de conhecimento, à formação e ao desenvolvimento de profissionais que buscam mais ciência e resultado na prática.</p>
-            <div className="mt-10"><ArrowLink href="https://www.instagram.com/fisiopro19/">Conheça a Academy</ArrowLink></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="contato" className="relative overflow-hidden bg-black px-5 py-24 text-white md:px-10 md:py-32 lg:px-14 lg:py-40">
-        <div className="contact-glow absolute -right-40 top-0 h-[500px] w-[500px] rounded-full bg-white/8 blur-[140px]" />
-        <div className="relative z-10 mx-auto max-w-[1500px]">
-          <div data-reveal className="reveal-up">
-            <p className="eyebrow text-white/55">Seu próximo movimento começa aqui</p>
-            <h2 className="mt-8 max-w-[1250px] text-[clamp(3.5rem,8.5vw,9.5rem)] font-medium leading-[.82] tracking-[-0.07em]">Vamos construir a sua melhor versão?</h2>
-          </div>
-          <div className="mt-14 flex flex-col justify-between gap-10 border-t border-white/20 pt-8 md:mt-20 md:flex-row md:items-end">
-            <div data-reveal className="reveal-up space-y-3 text-sm text-white/60">
-              <a href="tel:+5519971282430" className="block text-xl text-white transition hover:text-white/60">(19) 97128-2430</a>
-              <a href="https://www.instagram.com/fisiopro19/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 transition hover:text-white"><span aria-hidden="true">@</span>fisiopro19</a>
-            </div>
-            <div data-reveal className="reveal-up"><ArrowLink href={whatsapp} inverse>Agendar avaliação</ArrowLink></div>
-          </div>
-        </div>
-      </section>
-
-      <footer className="bg-black px-5 pb-8 text-white md:px-10 lg:px-14">
-        <div className="mx-auto max-w-[1500px] border-t border-white/15 pt-8">
-          <div className="flex flex-col justify-between gap-10 md:flex-row md:items-end">
-            <a href="#inicio" className="block h-16 w-56 overflow-hidden" aria-label="Fisio Pro — voltar ao início">
-              <img src="/images/logo-horizontal-white.png" alt="Fisio Pro" className="brand-lockup h-full w-full object-cover" />
-            </a>
-            <div className="flex flex-wrap gap-x-8 gap-y-3 text-[10px] uppercase tracking-[0.16em] text-white/45">
-              <a href="#metodo" className="hover:text-white">Método</a>
-              <a href="#especialidades" className="hover:text-white">Especialidades</a>
-              <a href="#espaco" className="hover:text-white">O espaço</a>
-              <a href="#equipe" className="hover:text-white">Equipe</a>
+            <div className="grid grid-cols-2 gap-10 sm:grid-cols-3">
+              <div>
+                <p className="footer-label">Navegação</p>
+                <nav className="mt-5 flex flex-col gap-3 text-sm text-white/58">
+                  <a href="#metodo" className="hover:text-white">Método</a>
+                  <a href="#especialidades" className="hover:text-white">Especialidades</a>
+                  <a href="#espaco" className="hover:text-white">O espaço</a>
+                </nav>
+              </div>
+              <div>
+                <p className="footer-label">Institucional</p>
+                <nav className="mt-5 flex flex-col gap-3 text-sm text-white/58">
+                  <a href="#equipe" className="hover:text-white">Equipe</a>
+                  <a href="#academy" className="hover:text-white">Academy</a>
+                  <a href="#contato" className="hover:text-white">Contato</a>
+                </nav>
+              </div>
+              <div className="col-span-2 sm:col-span-1">
+                <p className="footer-label">Fale conosco</p>
+                <div className="mt-5 flex flex-col gap-3 text-sm text-white/58">
+                  <a href="tel:+5519971282430" className="hover:text-white">(19) 97128-2430</a>
+                  <a href="https://www.instagram.com/fisiopro19/" target="_blank" rel="noreferrer" className="hover:text-white">@fisiopro19</a>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="mt-12 flex flex-col justify-between gap-3 border-t border-white/10 pt-5 text-[10px] uppercase tracking-[0.12em] text-white/35 sm:flex-row">
+          <div className="flex flex-col justify-between gap-3 pt-6 text-[9px] font-semibold uppercase tracking-[0.14em] text-white/32 sm:flex-row">
             <p>© 2026 Fisio Pro. Todos os direitos reservados.</p>
-            <p>Ciência para mover. Cuidado para evoluir.</p>
+            <p>Fisioterapia • Reabilitação • Performance</p>
           </div>
         </div>
       </footer>
 
-      <div className={`fixed inset-0 z-50 bg-[#0a0a0a] text-white transition duration-700 lg:hidden ${menuOpen ? 'visible opacity-100' : 'invisible opacity-0'}`}>
+      <a href={whatsapp} target="_blank" rel="noreferrer" className="mobile-book fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-30 flex items-center justify-between rounded-full bg-white px-5 py-3.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-black shadow-[0_14px_40px_rgba(0,0,0,.25)] md:hidden">
+        Agendar avaliação <ArrowUpRight className="h-4 w-4" />
+      </a>
+
+      <div className={`mobile-menu fixed inset-0 z-50 bg-black text-white transition duration-500 lg:hidden ${menuOpen ? 'visible opacity-100' : 'invisible opacity-0'}`}>
         <div className="flex items-center justify-between px-5 py-5 md:px-10">
-          <span className="text-sm font-medium tracking-[0.24em]">FISIO PRO</span>
-          <button type="button" className="grid h-11 w-11 place-items-center rounded-full border border-white/30" aria-label="Fechar menu" onClick={closeMenu}><X className="h-4 w-4" /></button>
+          <span className="text-[12px] font-semibold tracking-[0.24em]">FISIO PRO</span>
+          <Button type="button" variant="ghost" className="grid h-11 w-11 place-items-center rounded-full border border-white/30 p-0 text-white hover:bg-white hover:text-black" aria-label="Fechar menu" onClick={() => setMenuOpen(false)}>
+            <X className="h-4 w-4" />
+          </Button>
         </div>
         <nav className="flex h-[calc(100%-90px)] flex-col justify-center px-5 md:px-10" aria-label="Menu móvel">
           {[
-            ['Método', '#metodo'], ['Especialidades', '#especialidades'], ['O espaço', '#espaco'], ['Equipe', '#equipe'],
+            ['Método', '#metodo'],
+            ['Especialidades', '#especialidades'],
+            ['O espaço', '#espaco'],
+            ['Equipe', '#equipe'],
+            ['Academy', '#academy'],
           ].map(([label, href], index) => (
-            <a key={href} href={href} onClick={closeMenu} className="flex items-center justify-between border-t border-white/15 py-5 text-4xl tracking-[-0.04em] last:border-b sm:text-6xl">
-              <span>{label}</span><span className="text-xs text-white/35">0{index + 1}</span>
+            <a key={href} href={href} onClick={() => setMenuOpen(false)} className="flex items-center justify-between border-t border-white/15 py-4 text-[clamp(2.1rem,10vw,4rem)] tracking-[-0.045em] last:border-b">
+              <span>{label}</span>
+              <span className="text-[9px] font-semibold tracking-[0.18em] text-white/35">0{index + 1}</span>
             </a>
           ))}
-          <a href={whatsapp} onClick={closeMenu} className="mt-10 inline-flex items-center gap-3 text-xs uppercase tracking-[0.18em]">Agende sua avaliação <ArrowRight className="h-4 w-4" /></a>
         </nav>
       </div>
     </main>
