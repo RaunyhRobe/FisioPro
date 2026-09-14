@@ -34,11 +34,14 @@ const teamMembers = [
     formations: [] as string[],
   },
   {
-    name: 'Rauny',
+    name: 'Guilherme',
     role: 'Fisioterapeuta',
     image: '/images/therapist-rauny.jpeg',
-    alt: 'Rauny, fisioterapeuta da equipe Fisio Pro',
-    formations: [] as string[],
+    alt: 'Guilherme, fisioterapeuta da equipe Fisio Pro',
+    formations: [
+      'Especialista em Fisioterapia Esportiva',
+      'Especialista em Eletroterapia de Alta Performance',
+    ],
   },
 ];
 
