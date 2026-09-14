@@ -27,13 +27,6 @@ const instagram = 'https://www.instagram.com/fisiopro19/';
 
 const teamMembers = [
   {
-    name: 'Giovanni',
-    role: 'Fisioterapeuta',
-    image: '/images/team-giovanni-2026.jpeg',
-    alt: 'Giovanni, fisioterapeuta da equipe Fisio Pro',
-    formations: [] as string[],
-  },
-  {
     name: 'Guilherme',
     role: 'Fisioterapeuta',
     image: '/images/team-guilherme-2026.jpeg',
@@ -42,6 +35,13 @@ const teamMembers = [
       'Especialista em Fisioterapia Esportiva',
       'Especialista em Eletroterapia de Alta Performance',
     ],
+  },
+  {
+    name: 'Giovanni',
+    role: 'Fisioterapeuta',
+    image: '/images/team-giovanni-2026.jpeg',
+    alt: 'Giovanni, fisioterapeuta da equipe Fisio Pro',
+    formations: [] as string[],
   },
 ];
 
@@ -632,18 +632,16 @@ export function FisioProSite() {
                     <p className="text-sm font-semibold uppercase tracking-[0.14em] text-black/48">{member.role}</p>
                   </div>
 
-                  <div className="mt-7 grid gap-3 border-t border-black/15 pt-5 sm:grid-cols-[9rem_1fr]">
-                    <p className="text-sm font-semibold uppercase tracking-[0.14em] text-black/45">Formações</p>
-                    {member.formations.length > 0 ? (
+                  {member.formations.length > 0 && (
+                    <div className="mt-7 grid gap-3 border-t border-black/15 pt-5 sm:grid-cols-[9rem_1fr]">
+                      <p className="text-sm font-semibold uppercase tracking-[0.14em] text-black/45">Formações</p>
                       <ul className="space-y-2 text-base leading-7 text-black/68">
                         {member.formations.map((formation) => (
                           <li key={formation} className="border-b border-black/10 pb-2">{formation}</li>
                         ))}
                       </ul>
-                    ) : (
-                      <p className="text-base leading-7 text-black/58">Informações em atualização.</p>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </article>
             ))}
