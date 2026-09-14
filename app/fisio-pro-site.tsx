@@ -29,14 +29,14 @@ const teamMembers = [
   {
     name: 'Giovanni',
     role: 'Fisioterapeuta',
-    image: '/images/therapist-giovanni.jpeg',
+    image: '/images/team-giovanni-2026.jpeg',
     alt: 'Giovanni, fisioterapeuta da equipe Fisio Pro',
     formations: [] as string[],
   },
   {
     name: 'Guilherme',
     role: 'Fisioterapeuta',
-    image: '/images/therapist-rauny.jpeg',
+    image: '/images/team-guilherme-2026.jpeg',
     alt: 'Guilherme, fisioterapeuta da equipe Fisio Pro',
     formations: [
       'Especialista em Fisioterapia Esportiva',
