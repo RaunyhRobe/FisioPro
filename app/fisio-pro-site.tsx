@@ -1,14 +1,18 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import {
-  ArrowDown,
   ArrowUpRight,
+  AtSign,
   ChevronLeft,
   ChevronRight,
+  MapPin,
   Menu,
+  MessageCircle,
+  Phone,
+  Star,
   X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,35 +20,57 @@ import { Button } from '@/components/ui/button';
 const whatsapp =
   'https://wa.me/5519971282430?text=Olá%2C%20gostaria%20de%20agendar%20uma%20avaliação%20na%20Fisio%20Pro.';
 
+const googleMaps =
+  'https://maps.google.com/maps/place//data=!4m2!3m1!1s0x94cf2fa64a030c7d:0xc510b059950b33a4?entry=s&sa=X&ved=2ahUKEwixgPmP_N6WAxWWPrkGHVJcE-sQ4kB6BAgVEAA&hl=pt';
+
+const instagram = 'https://www.instagram.com/fisiopro19/';
+
+const teamMembers = [
+  {
+    name: 'Giovanni',
+    role: 'Fisioterapeuta',
+    image: '/images/therapist-giovanni.jpeg',
+    alt: 'Giovanni, fisioterapeuta da equipe Fisio Pro',
+    formations: [] as string[],
+  },
+  {
+    name: 'Rauny',
+    role: 'Fisioterapeuta',
+    image: '/images/therapist-rauny.jpeg',
+    alt: 'Rauny, fisioterapeuta da equipe Fisio Pro',
+    formations: [] as string[],
+  },
+];
+
 const specialties = [
   {
     number: '01',
     title: 'Fisioterapia esportiva',
-    text: 'Tratamento, prevenção e retorno seguro ao esporte com progressão baseada na sua resposta.',
-    image: '/images/mobility-youth.jpeg',
-    alt: 'Fisioterapia esportiva individualizada na Fisio Pro',
+    text: 'Prevenção, reabilitação e retorno ao esporte com testes objetivos e critérios claros para cada avanço.',
+    image: '/images/sports-rehab.jpeg',
+    alt: 'Atleta realizando exercício específico durante a reabilitação esportiva',
   },
   {
     number: '02',
-    title: 'Ortopedia e trauma',
-    text: 'Um plano preciso para recuperar mobilidade, força e confiança após lesões ou cirurgias.',
-    image: '/images/ultrasound-treatment.jpeg',
-    alt: 'Tratamento ortopédico com tecnologia na Fisio Pro',
+    title: 'Ortopedia e pós-operatório',
+    text: 'Um plano individual por fases para recuperar mobilidade, força e independência após dor, lesão ou cirurgia.',
+    image: '/images/orthopedic-assessment.jpeg',
+    alt: 'Avaliação ortopédica com medição objetiva de movimento',
   },
   {
     number: '03',
     title: 'Recovery & performance',
-    text: 'Estratégias de recuperação e treinamento terapêutico para sustentar sua melhor performance.',
-    image: '/images/recovery-compression.jpeg',
-    alt: 'Sessão de recovery na Fisio Pro',
+    text: 'Treinamento terapêutico e recursos avançados, quando indicados, para apoiar a recuperação e a prontidão física.',
+    image: '/images/tecare-treatment.jpeg',
+    alt: 'Tecnologia TECARE integrada ao atendimento manual na Fisio Pro',
   },
 ];
 
 const journey = [
-  ['01', 'Escutar', 'Sua história, sua rotina e o movimento que você quer recuperar.'],
-  ['02', 'Investigar', 'Uma avaliação funcional para entender a causa, não apenas o sintoma.'],
-  ['03', 'Construir', 'Um plano individual, claro e progressivo, feito para a sua realidade.'],
-  ['04', 'Evoluir', 'Acompanhamento contínuo até você se movimentar com autonomia.'],
+  ['01', 'Diagnóstico', 'Entendemos sua história, sua rotina, a lesão e o movimento que você precisa recuperar.'],
+  ['02', 'Testes objetivos', 'Medimos mobilidade, força e controle para definir um ponto de partida e metas reais.'],
+  ['03', 'Plano por fases', 'Cada etapa tem objetivos e critérios clínicos claros, ajustados à resposta do seu corpo.'],
+  ['04', 'Retorno seguro', 'Reavaliamos sua evolução até a alta e o retorno à rotina ou ao esporte com confiança.'],
 ];
 
 const academyPillars = [
@@ -55,24 +81,24 @@ const academyPillars = [
 
 const technologyItems = [
   {
-    title: 'Avaliação funcional',
-    text: 'Análise detalhada de mobilidade, força, controle e padrões de movimento para identificar a origem da limitação e definir objetivos mensuráveis.',
+    title: 'Testes objetivos',
+    text: 'Mobilidade, força, controle e padrões de movimento são medidos para orientar decisões, acompanhar a evolução e reduzir o espaço para achismos.',
   },
   {
-    title: 'Terapia manual',
-    text: 'Técnicas aplicadas de forma individual para reduzir desconfortos, recuperar mobilidade e preparar o corpo para voltar a se movimentar com segurança.',
+    title: 'TECARE FISIO',
+    text: 'Tecnologia de tecarterapia e diatermia utilizada quando indicada para apoiar o controle da dor, a recuperação e o retorno às atividades.',
   },
   {
-    title: 'Eletroterapia e laser',
-    text: 'Recursos utilizados como apoio ao tratamento para modular a dor, favorecer a recuperação tecidual e potencializar a resposta clínica quando indicados.',
+    title: 'Hands Free + terapia manual',
+    text: 'Pulseiras condutoras permitem integrar o estímulo da TECARE às mãos do fisioterapeuta durante técnicas manuais, sem perder o cuidado próximo.',
   },
   {
     title: 'Treinamento terapêutico',
-    text: 'Exercícios planejados e acompanhados para reconstruir força, estabilidade, coordenação e confiança nas atividades do dia a dia ou do esporte.',
+    text: 'Exercícios planejados para reconstruir força, estabilidade, coordenação e confiança nas demandas reais do dia a dia ou do esporte.',
   },
   {
-    title: 'Recovery',
-    text: 'Estratégias de recuperação, como compressão pneumática e mobilidade orientada, para controlar a fadiga e manter o corpo pronto para o próximo desafio.',
+    title: 'Reavaliação contínua',
+    text: 'Os mesmos indicadores que guiam o início do plano ajudam a demonstrar a evolução e a decidir, com segurança, quando avançar de fase.',
   },
 ];
 
@@ -107,6 +133,29 @@ export function FisioProSite() {
   const [introDone, setIntroDone] = useState(false);
   const [openTechnology, setOpenTechnology] = useState<number | null>(0);
   const galleryRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+
+    if (window.location.hash) {
+      window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}`);
+    }
+
+    const resetToTop = () => window.scrollTo(0, 0);
+    resetToTop();
+    let secondFrame = 0;
+    const firstFrame = window.requestAnimationFrame(() => {
+      resetToTop();
+      secondFrame = window.requestAnimationFrame(resetToTop);
+    });
+
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
+    };
+  }, []);
 
   useEffect(() => {
     const introTimer = window.setTimeout(() => setIntroDone(true), 1650);
@@ -276,8 +325,9 @@ export function FisioProSite() {
 
         <div className="relative z-10 flex min-h-[100svh] flex-col justify-end px-5 pb-7 pt-28 md:px-10 md:pb-10 lg:px-14 lg:pb-12">
           <div className="hero-copy">
-            <p className="mb-4 text-[9px] font-semibold uppercase tracking-[0.3em] text-white/70 md:text-[11px]">
-              Fisioterapia esportiva • Ortopedia • Recovery
+            <p className="mb-4 flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.24em] text-white/78 md:text-[11px]">
+              <Star className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
+              5,0 no Google • 58 avaliações
             </p>
             <h1 className="max-w-[1320px] text-[clamp(3.7rem,10vw,10.8rem)] font-medium leading-[0.78] tracking-[-0.072em]">
               Movimento é
@@ -286,23 +336,23 @@ export function FisioProSite() {
           </div>
           <div className="mt-8 grid gap-6 border-t border-white/30 pt-5 md:mt-10 md:grid-cols-[1fr_auto] md:items-end">
             <p className="max-w-md text-[13px] leading-6 text-white/76 md:text-base md:leading-7">
-              Recuperar o movimento é recuperar possibilidades. Aqui, ciência, estratégia e cuidado trabalham juntos para levar você adiante.
+              Fisioterapia ortopédica e esportiva com avaliação individual, testes objetivos e um plano por fases — do diagnóstico ao retorno seguro.
             </p>
-            <a href="#metodo" className="group flex items-center justify-between gap-4 text-[9px] font-semibold uppercase tracking-[0.18em] text-white/75 md:text-[10px]">
-              Conheça a Fisio Pro
+            <a href={whatsapp} target="_blank" rel="noreferrer" className="group flex items-center justify-between gap-4 text-[9px] font-semibold uppercase tracking-[0.18em] text-white/85 md:text-[10px]">
+              Agendar minha avaliação
               <span className="grid h-11 w-11 place-items-center rounded-full border border-white/35 transition group-hover:bg-white group-hover:text-black">
-                <ArrowDown className="h-4 w-4" />
+                <ArrowUpRight className="h-4 w-4" />
               </span>
             </a>
           </div>
         </div>
       </section>
 
-      <div className="marquee-wrap border-y border-black/10 bg-[#e5e1d8] py-4" aria-hidden="true">
+      <div className="marquee-wrap border-y border-black/15 bg-white py-4" aria-hidden="true">
         <div className="marquee-track text-[10px] font-semibold uppercase tracking-[0.26em]">
           {[0, 1].map((set) => (
-            <div className="flex shrink-0 items-center" key={set}>
-              {['Ciência', 'Movimento', 'Cuidado', 'Performance', 'Autonomia', 'Resultado'].map((word) => (
+            <div className="marquee-group" key={set}>
+              {['Método por fases', 'Testes objetivos', 'Evidência clínica', 'Tecnologia aplicada', 'Reavaliação contínua', 'Retorno seguro'].map((word) => (
                 <span className="flex items-center" key={`${set}-${word}`}>
                   <span className="mx-6 h-1 w-1 rounded-full bg-black" />
                   {word}
@@ -313,17 +363,17 @@ export function FisioProSite() {
         </div>
       </div>
 
-      <section id="metodo" className="content-section bg-[#f2efe8] px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
+      <section id="metodo" className="content-section bg-white px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
         <div className="mx-auto max-w-[1640px]">
           <div className="grid items-start gap-10 lg:grid-cols-[.82fr_1.18fr] lg:gap-20">
             <div className="method-copy lg:sticky lg:top-20">
               <p className="eyebrow" data-reveal>Nosso método</p>
               <h2 className="mt-6 max-w-[760px] text-[clamp(3rem,5.8vw,6.8rem)] font-medium leading-[.9] tracking-[-0.06em]" data-reveal>
-                Seu corpo não é um protocolo.
-                <span className="mt-2 block font-serif font-normal italic text-black/44">É uma história em movimento.</span>
+                Recuperação não combina com achismo.
+                <span className="mt-2 block font-serif font-normal italic text-black/44">Cada fase precisa de um porquê.</span>
               </h2>
               <p className="mt-7 max-w-lg text-[15px] leading-7 text-black/62 md:text-lg md:leading-8" data-reveal>
-                A avaliação começa pela escuta e ganha profundidade no movimento. Cada decisão clínica é explicada, acompanhada e ajustada para você.
+                Do diagnóstico à alta, o tratamento segue critérios clínicos, testes objetivos e condutas baseadas em evidências. Você entende onde está, o que vem a seguir e por que avançou.
               </p>
               <div className="mt-9" data-reveal>
                 <ArrowLink href={whatsapp}>Agendar minha avaliação</ArrowLink>
@@ -332,16 +382,16 @@ export function FisioProSite() {
 
             <figure className="method-visual relative min-h-[580px] overflow-hidden md:min-h-[760px]" data-reveal>
               <img
-                src="/images/treadmill-enhanced.webp"
-                alt="Fisioterapeuta acompanhando uma avaliação funcional"
-                width="1536"
-                height="1024"
+                src="/images/objective-tests.jpeg"
+                alt="Fisioterapeuta acompanhando testes objetivos em um atleta"
+                width="1066"
+                height="1600"
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 h-full w-full object-cover"
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6 pt-28 text-white md:p-9">
-                <p className="max-w-xs text-sm leading-6 text-white/75">Avaliação funcional individual, do primeiro contato ao retorno completo.</p>
+                <p className="max-w-sm text-sm leading-6 text-white/78">Dados para decidir. Presença clínica para transformar cada medida em um plano individual.</p>
               </div>
             </figure>
           </div>
@@ -350,38 +400,38 @@ export function FisioProSite() {
 
       <section className="content-section bg-black px-5 py-20 text-white md:px-10 md:py-28 lg:px-14 lg:py-36">
         <div className="mx-auto max-w-[1640px]">
-          <p className="eyebrow text-white/50" data-reveal>Como enxergamos você</p>
+          <p className="eyebrow text-white/50" data-reveal>O diferencial Fisio Pro</p>
           <div className="mt-8 grid gap-8 lg:grid-cols-[1.15fr_.85fr] lg:items-start lg:gap-16">
             <h2 className="max-w-5xl text-[clamp(3.1rem,7.5vw,8.6rem)] font-medium leading-[.84] tracking-[-0.07em]" data-reveal>
-              Antes da lesão, existe uma pessoa.
+              Mais que aliviar a dor. Preparar você para voltar.
             </h2>
             <p className="max-w-lg text-base leading-8 text-white/55 lg:pt-8" data-reveal>
-              Esporte, trabalho, família e rotina fazem parte do plano. A reabilitação precisa devolver função sem afastar você de quem você é.
+              O objetivo não termina quando o incômodo diminui. A evolução continua até você recuperar função, confiança e capacidade para as demandas da sua vida.
             </p>
           </div>
 
           <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2 md:gap-6">
             <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden" data-reveal>
-              <img src="/images/assessment-team.jpeg" alt="Equipe avaliando um jovem atleta" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover object-[center_38%]" />
+              <img src="/images/team-action.jpeg" alt="Equipe Fisio Pro reunida no ambiente de treinamento" width="1600" height="1066" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
             </figure>
             <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden" data-reveal>
-              <img src="/images/functional-older.jpeg" alt="Treino funcional acompanhado por fisioterapeuta" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover object-[center_38%]" />
+              <img src="/images/performance-assessment.jpeg" alt="Atleta realizando teste funcional acompanhado por fisioterapeutas" width="1600" height="1066" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
             </figure>
           </div>
         </div>
       </section>
 
-      <section id="especialidades" className="content-section bg-[#f2efe8] px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
+      <section id="especialidades" className="content-section bg-white px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
         <div className="mx-auto max-w-[1640px]">
           <div className="flex flex-col justify-between gap-7 md:flex-row md:items-end">
             <div>
               <p className="eyebrow" data-reveal>Especialidades</p>
               <h2 className="mt-6 max-w-4xl text-[clamp(3rem,6.5vw,7.4rem)] font-medium leading-[.87] tracking-[-0.065em]" data-reveal>
-                Cuidado visível. Evolução real.
+                Cuidado para cada objetivo. Critérios para cada avanço.
               </h2>
             </div>
             <p className="max-w-sm text-sm leading-7 text-black/58 md:text-base" data-reveal>
-              Cada especialidade parte da mesma ideia: entender bem para cuidar melhor.
+              Para atletas, praticantes de atividade física ou quem quer voltar à rotina com mais mobilidade e menos limitação.
             </p>
           </div>
 
@@ -405,10 +455,10 @@ export function FisioProSite() {
       <section className="immersive-story relative h-[100svh] bg-black text-white" data-immersive>
         <div className="sticky top-0 h-[100svh] overflow-hidden">
           <img
-            src="/images/mobility-youth.jpeg"
-            alt="Atendimento individual para recuperar o movimento"
-            width="1280"
-            height="854"
+            src="/images/sports-rehab.jpeg"
+            alt="Reabilitação esportiva com exercício específico e resistência"
+            width="1066"
+            height="1600"
             loading="lazy"
             decoding="async"
             className="immersive-image absolute inset-0 h-full w-full object-cover"
@@ -431,12 +481,12 @@ export function FisioProSite() {
         </div>
       </section>
 
-      <section className="content-section bg-[#d9d4ca] px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
+      <section className="content-section border-t border-black/10 bg-white px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
         <div className="mx-auto grid max-w-[1640px] gap-12 lg:grid-cols-[.72fr_1.28fr] lg:gap-24">
           <div className="lg:sticky lg:top-20 lg:self-start">
-            <p className="eyebrow" data-reveal>Uma jornada clara</p>
+            <p className="eyebrow" data-reveal>Do diagnóstico à alta</p>
             <h2 className="mt-6 max-w-xl text-[clamp(3rem,5vw,6rem)] font-medium leading-[.9] tracking-[-0.06em]" data-reveal>
-              Você entende cada próximo passo.
+              Um plano claro. Uma evolução que pode ser medida.
             </h2>
           </div>
           <div className="border-t border-black/20">
@@ -451,18 +501,18 @@ export function FisioProSite() {
         </div>
       </section>
 
-      <section className="content-section bg-[#f2efe8] px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
+      <section className="content-section border-t border-black/10 bg-white px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
         <div className="mx-auto max-w-[1640px]">
           <div className="grid gap-10 lg:grid-cols-2 lg:gap-24">
             <div>
-              <p className="eyebrow" data-reveal>Tecnologia com propósito</p>
+              <p className="eyebrow" data-reveal>Tecnologia aplicada com método</p>
               <h2 className="mt-6 max-w-3xl text-[clamp(3rem,5.8vw,6.6rem)] font-medium leading-[.89] tracking-[-0.065em]" data-reveal>
-                Precisão para decidir. Presença para cuidar.
+                Tecnologia não substitui o cuidado. Potencializa a estratégia.
               </h2>
             </div>
             <div className="lg:pt-24" data-reveal>
               <p className="max-w-xl text-base leading-8 text-black/62 md:text-lg">
-                A tecnologia amplia o olhar clínico, mas é a experiência humana que orienta cada escolha.
+                Recursos avançados entram quando fazem sentido para o seu caso e sempre fazem parte de um plano clínico maior.
               </p>
               <div className="technology-list mt-9 border-y border-black/15">
                 {technologyItems.map((item, index) => {
@@ -493,13 +543,13 @@ export function FisioProSite() {
 
           <div className="mt-14 grid gap-3 sm:grid-cols-3 md:mt-20 md:gap-5">
             <figure className="media-reveal h-[420px] overflow-hidden md:h-[560px] lg:h-[620px]" data-reveal>
-              <img src="/images/electrotherapy.jpeg" alt="Aplicação de eletroterapia durante atendimento" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+              <img src="/images/electrostimulation.jpeg" alt="Tecnologia de eletroestimulação aplicada ao membro inferior" width="1066" height="1600" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             </figure>
             <figure className="media-reveal h-[420px] overflow-hidden md:h-[560px] lg:h-[620px]" data-reveal>
-              <img src="/images/equipment.jpeg" alt="Equipamentos clínicos da Fisio Pro" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+              <img src="/images/tecare-treatment.jpeg" alt="TECARE FISIO integrada às técnicas manuais" width="1066" height="1600" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             </figure>
             <figure className="media-reveal h-[420px] overflow-hidden md:h-[560px] lg:h-[620px]" data-reveal>
-              <img src="/images/compression-care.jpeg" alt="Atendimento de recovery por compressão" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+              <img src="/images/objective-tests.jpeg" alt="Acompanhamento de testes objetivos em tempo real" width="1066" height="1600" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             </figure>
           </div>
         </div>
@@ -542,39 +592,63 @@ export function FisioProSite() {
         </div>
       </section>
 
-      <section id="equipe" className="content-section bg-[#f2efe8] px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
+      <section id="equipe" className="content-section bg-white px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
         <div className="mx-auto max-w-[1640px]">
           <div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:gap-20">
             <div>
               <p className="eyebrow" data-reveal>Equipe Fisio Pro</p>
               <h2 className="mt-6 text-[clamp(3rem,5.6vw,6.4rem)] font-medium leading-[.9] tracking-[-0.065em]" data-reveal>
-                Técnica que inspira confiança.
+                Profissionais presentes em cada fase.
               </h2>
             </div>
             <p className="max-w-2xl text-lg leading-8 text-black/58 lg:mt-24" data-reveal>
-              Profissionais que unem raciocínio clínico, atualização constante e atenção genuína à sua evolução.
+              Uma equipe que une raciocínio clínico, atualização constante e acompanhamento próximo para transformar dados em decisões seguras.
             </p>
           </div>
-          <div className="mt-14 grid gap-4 sm:grid-cols-2 md:mt-20 md:gap-6">
-            <figure className="team-portrait relative h-[64svh] min-h-[520px] max-h-[760px] overflow-hidden" data-reveal>
-              <img src="/images/therapist-giovanni.jpeg" alt="Fisioterapeuta da equipe Fisio Pro" width="1280" height="854" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
-              <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6 pt-28 text-white">
-                <p className="text-xl font-medium">Ciência e raciocínio clínico</p>
-                <p className="mt-1 text-sm text-white/58">Cuidado orientado por cada resposta do corpo.</p>
-              </figcaption>
-            </figure>
-            <figure className="team-portrait relative h-[64svh] min-h-[520px] max-h-[760px] overflow-hidden" data-reveal>
-              <img src="/images/therapist-rauny.jpeg" alt="Fisioterapeuta da equipe Fisio Pro" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover object-[center_18%]" />
-              <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6 pt-28 text-white">
-                <p className="text-xl font-medium">Escuta e acompanhamento</p>
-                <p className="mt-1 text-sm text-white/58">Presença em todas as etapas da evolução.</p>
-              </figcaption>
-            </figure>
+          <div className="mt-14 grid gap-x-6 gap-y-14 md:mt-20 md:grid-cols-2 lg:gap-x-10 lg:gap-y-20">
+            {teamMembers.map((member, index) => (
+              <article key={member.name} className={index % 2 ? 'md:mt-20' : ''} data-reveal>
+                <figure className="team-portrait relative aspect-[4/5] min-h-0 overflow-hidden bg-black">
+                  <img
+                    src={member.image}
+                    alt={member.alt}
+                    width="1066"
+                    height="1600"
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover object-center"
+                  />
+                  <span className="absolute right-5 top-5 grid h-10 w-10 place-items-center rounded-full bg-black text-[10px] font-semibold text-white">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                </figure>
+
+                <div className="border-t border-black pt-5 md:pt-6">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                    <h3 className="text-[clamp(2rem,4vw,4.5rem)] font-medium leading-none tracking-[-0.055em]">{member.name}</h3>
+                    <p className="text-sm font-semibold uppercase tracking-[0.14em] text-black/48">{member.role}</p>
+                  </div>
+
+                  <div className="mt-7 grid gap-3 border-t border-black/15 pt-5 sm:grid-cols-[9rem_1fr]">
+                    <p className="text-sm font-semibold uppercase tracking-[0.14em] text-black/45">Formações</p>
+                    {member.formations.length > 0 ? (
+                      <ul className="space-y-2 text-base leading-7 text-black/68">
+                        {member.formations.map((formation) => (
+                          <li key={formation} className="border-b border-black/10 pb-2">{formation}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-base leading-7 text-black/58">Informações em atualização.</p>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
-      <section id="academy" className="academy-v2 content-section bg-[#d9d4ca] px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
+      <section id="academy" className="academy-v2 content-section border-t border-black/10 bg-white px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
         <div className="mx-auto grid max-w-[1640px] gap-12 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:gap-24">
           <div className="academy-card flex min-h-[360px] items-center justify-center overflow-hidden bg-white p-7 md:min-h-[560px] md:p-12" data-reveal>
             <img src="/images/logo-academy.jpg" alt="Fisio Pro Academy — Ciência, Ensino, Resultados" width="900" height="1600" loading="lazy" decoding="async" className="academy-logo w-full max-w-[620px] mix-blend-multiply" />
@@ -603,25 +677,25 @@ export function FisioProSite() {
         </div>
       </section>
 
-      <section id="contato" className="closing-cta bg-[#f2efe8] px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
+      <section id="contato" className="closing-cta border-t border-black/10 bg-white px-5 py-20 md:px-10 md:py-28 lg:px-14 lg:py-36">
         <div className="mx-auto max-w-[1640px]">
-          <p className="eyebrow" data-reveal>Seu próximo movimento começa aqui</p>
+          <p className="eyebrow" data-reveal>Avaliação individual em Louveira</p>
           <h2 className="mt-8 max-w-[1450px] text-[clamp(3.4rem,9vw,10.4rem)] font-medium leading-[.8] tracking-[-0.075em]" data-reveal>
-            Pronto para voltar ao seu melhor?
+            Seu retorno começa com uma avaliação de verdade.
           </h2>
           <div className="mt-14 grid gap-9 border-t border-black/20 pt-7 md:mt-20 md:grid-cols-[1fr_auto] md:items-end">
-            <div className="space-y-3" data-reveal>
-              <a href="tel:+5519971282430" className="block text-2xl font-medium tracking-[-0.03em] transition hover:opacity-55">(19) 97128-2430</a>
-              <a href="https://www.instagram.com/fisiopro19/" target="_blank" rel="noreferrer" className="inline-flex text-sm text-black/55 transition hover:text-black">@fisiopro19</a>
+            <div className="max-w-xl" data-reveal>
+              <p className="text-lg leading-8 text-black/62">Conte o que está limitando você. A equipe orienta o melhor primeiro passo e encontra um horário para sua avaliação.</p>
+              <p className="mt-4 flex items-center gap-2 text-sm font-medium text-black/70"><MapPin className="h-4 w-4" aria-hidden="true" /> Vila Nova Louveira • Louveira, SP</p>
             </div>
-            <div data-reveal><ArrowLink href={whatsapp}>Agendar avaliação</ArrowLink></div>
+            <div data-reveal><ArrowLink href={whatsapp}>Quero agendar minha avaliação</ArrowLink></div>
           </div>
         </div>
       </section>
 
       <footer className="footer-v2 bg-black px-5 pb-8 pt-10 text-white md:px-10 md:pb-10 md:pt-14 lg:px-14">
         <div className="mx-auto max-w-[1640px]">
-          <div className="grid gap-14 border-b border-white/15 pb-14 lg:grid-cols-[1.15fr_.85fr] lg:items-end">
+          <div className="grid gap-14 border-b border-white/15 pb-14 lg:grid-cols-[.78fr_1.22fr] lg:items-end">
             <div>
               <a href="#inicio" aria-label="Fisio Pro — voltar ao início" className="inline-flex items-center gap-4">
                 <img src="/images/mark-white.png" alt="" width="66" height="66" className="h-16 w-16 rounded-full" />
@@ -631,31 +705,35 @@ export function FisioProSite() {
                 Ciência para mover.<br />Cuidado para evoluir.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-10 sm:grid-cols-3">
-              <div>
-                <p className="footer-label">Navegação</p>
-                <nav className="mt-5 flex flex-col gap-3 text-sm text-white/58">
-                  <a href="#metodo" className="hover:text-white">Método</a>
-                  <a href="#especialidades" className="hover:text-white">Especialidades</a>
-                  <a href="#espaco" className="hover:text-white">O espaço</a>
-                </nav>
-              </div>
-              <div>
-                <p className="footer-label">Institucional</p>
-                <nav className="mt-5 flex flex-col gap-3 text-sm text-white/58">
-                  <a href="#equipe" className="hover:text-white">Equipe</a>
-                  <a href="#academy" className="hover:text-white">Academy</a>
-                  <a href="#contato" className="hover:text-white">Contato</a>
-                </nav>
-              </div>
-              <div className="col-span-2 sm:col-span-1">
-                <p className="footer-label">Fale conosco</p>
-                <div className="mt-5 flex flex-col gap-3 text-sm text-white/58">
-                  <a href="tel:+5519971282430" className="hover:text-white">(19) 97128-2430</a>
-                  <a href="https://www.instagram.com/fisiopro19/" target="_blank" rel="noreferrer" className="hover:text-white">@fisiopro19</a>
-                </div>
-              </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <a href={whatsapp} target="_blank" rel="noreferrer" className="footer-contact-card group">
+                <MessageCircle className="h-5 w-5" aria-hidden="true" />
+                <span><small>Agende pelo WhatsApp</small><strong>(19) 97128-2430</strong></span>
+                <ArrowUpRight className="ml-auto h-4 w-4 opacity-45 transition group-hover:opacity-100" aria-hidden="true" />
+              </a>
+              <a href="tel:+5519971282430" className="footer-contact-card group">
+                <Phone className="h-5 w-5" aria-hidden="true" />
+                <span><small>Prefere ligar?</small><strong>Fale com a clínica</strong></span>
+                <ArrowUpRight className="ml-auto h-4 w-4 opacity-45 transition group-hover:opacity-100" aria-hidden="true" />
+              </a>
+              <a href={instagram} target="_blank" rel="noreferrer" className="footer-contact-card group">
+                <AtSign className="h-5 w-5" aria-hidden="true" />
+                <span><small>Acompanhe nosso trabalho</small><strong>Instagram @fisiopro19</strong></span>
+                <ArrowUpRight className="ml-auto h-4 w-4 opacity-45 transition group-hover:opacity-100" aria-hidden="true" />
+              </a>
+              <a href={googleMaps} target="_blank" rel="noreferrer" className="footer-contact-card group">
+                <MapPin className="h-5 w-5" aria-hidden="true" />
+                <span><small>Abra a rota no Google Maps</small><strong>R. Nícola Tarallo, 44</strong></span>
+                <ArrowUpRight className="ml-auto h-4 w-4 opacity-45 transition group-hover:opacity-100" aria-hidden="true" />
+              </a>
             </div>
+          </div>
+          <div className="flex flex-wrap gap-x-6 gap-y-3 border-b border-white/10 py-6 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/48">
+            <a href="#metodo" className="hover:text-white">Método</a>
+            <a href="#especialidades" className="hover:text-white">Especialidades</a>
+            <a href="#espaco" className="hover:text-white">O espaço</a>
+            <a href="#equipe" className="hover:text-white">Equipe</a>
+            <a href="#academy" className="hover:text-white">Academy</a>
           </div>
           <div className="flex flex-col justify-between gap-3 pt-6 text-[9px] font-semibold uppercase tracking-[0.14em] text-white/32 sm:flex-row">
             <p>
@@ -667,8 +745,8 @@ export function FisioProSite() {
         </div>
       </footer>
 
-      <a href={whatsapp} target="_blank" rel="noreferrer" className="mobile-book fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-30 flex items-center justify-between rounded-full bg-white px-5 py-3.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-black shadow-[0_14px_40px_rgba(0,0,0,.25)] md:hidden">
-        Agendar avaliação <ArrowUpRight className="h-4 w-4" />
+      <a href={whatsapp} target="_blank" rel="noreferrer" aria-label="Falar com a Fisio Pro pelo WhatsApp" className="whatsapp-float fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-30 grid h-14 w-14 place-items-center rounded-full bg-[#25d366] text-[#071c0f] shadow-[0_14px_40px_rgba(0,0,0,.3)] md:bottom-6 md:right-6">
+        <MessageCircle className="h-6 w-6" aria-hidden="true" />
       </a>
 
       <div className={`mobile-menu fixed inset-0 z-50 bg-black text-white transition duration-500 lg:hidden ${menuOpen ? 'visible opacity-100' : 'invisible opacity-0'}`}>
