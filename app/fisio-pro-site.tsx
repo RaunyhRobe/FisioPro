@@ -410,11 +410,11 @@ export function FisioProSite() {
           </div>
 
           <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2 md:gap-6">
-            <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden bg-black" data-reveal>
-              <img src="/images/clinical-technology-assessment-2026.jpg" alt="Fisioterapeuta utilizando tecnologia de avaliação e eletroestimulação em um paciente" width="1066" height="1600" loading="lazy" decoding="async" className="h-full w-full object-cover object-center md:object-contain" />
+            <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden" data-reveal>
+              <img src="/images/clinical-technology-assessment-2026.jpg" alt="Fisioterapeuta utilizando tecnologia de avaliação e eletroestimulação em um paciente" width="1066" height="1600" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
             </figure>
-            <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden bg-black" data-reveal>
-              <img src="/images/performance-treadmill-2026.jpeg" alt="Fisioterapeuta acompanhando um atleta em avaliação de performance" width="1280" height="854" loading="lazy" decoding="async" className="h-full w-full object-cover object-center md:object-contain" />
+            <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden" data-reveal>
+              <img src="/images/performance-treadmill-2026.jpeg" alt="Fisioterapeuta acompanhando um atleta em avaliação de performance" width="1280" height="854" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
             </figure>
           </div>
         </div>
@@ -460,7 +460,7 @@ export function FisioProSite() {
             height="1280"
             loading="lazy"
             decoding="async"
-            className="immersive-image absolute inset-0 h-full w-full object-cover md:object-contain"
+            className="immersive-image absolute inset-0 h-full w-full object-cover"
           />
           <div className="immersive-shade absolute inset-0" />
           <div className="relative z-10 flex h-full flex-col justify-between px-5 py-7 md:px-10 md:py-10 lg:px-14">
@@ -581,7 +581,7 @@ export function FisioProSite() {
 
         <div ref={galleryRef} className="space-gallery mt-10 grid grid-cols-2 gap-3 px-5 pb-4 md:mt-20 md:flex md:snap-x md:snap-mandatory md:gap-6 md:overflow-x-auto md:px-10 lg:px-14">
           {[
-            ['/images/hero-space.jpeg', 'Vista vertical da área ampla de treinamento da Fisio Pro'],
+            ['/images/space-wide-2026.jpeg', 'Vista ampla da área de treinamento da Fisio Pro'],
             ['/images/space-hero-2026.jpeg', 'Vista panorâmica da estrutura Fisio Pro'],
             ['/images/space-equipment-2026.jpeg', 'Equipamentos funcionais organizados no espaço de treinamento'],
             ['/images/space-bike-2026.jpeg', 'Bicicleta e equipamentos de preparação física da Fisio Pro'],
@@ -596,8 +596,8 @@ export function FisioProSite() {
               <img
                 src={src}
                 alt={alt}
-                width={index === 0 ? 854 : 1280}
-                height={index === 0 ? 1280 : 854}
+                width="1280"
+                height="854"
                 loading="lazy"
                 decoding="async"
                 className="h-full w-full object-cover"
@@ -624,7 +624,7 @@ export function FisioProSite() {
           <div className="mt-14 grid gap-x-6 gap-y-14 md:mt-20 md:grid-cols-2 lg:gap-x-10 lg:gap-y-20">
             {teamMembers.map((member, index) => (
               <article key={member.name} className="flex h-full flex-col" data-reveal>
-                <figure className="team-portrait relative aspect-[4/3] min-h-0 overflow-hidden bg-[#f3f3f1]">
+                <figure className="team-portrait relative aspect-[4/3] min-h-0 overflow-hidden bg-black md:aspect-[16/10]">
                   <img
                     src={member.image}
                     alt={member.alt}
@@ -632,7 +632,7 @@ export function FisioProSite() {
                     height={member.imageHeight}
                     loading="lazy"
                     decoding="async"
-                    className="h-full w-full object-cover md:object-contain"
+                    className="h-full w-full object-cover"
                     style={{ objectPosition: member.objectPosition }}
                   />
                   <span className="absolute right-5 top-5 grid h-10 w-10 place-items-center rounded-full bg-black text-[10px] font-semibold text-white">
