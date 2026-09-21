@@ -383,7 +383,7 @@ export function FisioProSite() {
 
           <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2 md:gap-6">
             <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden" data-reveal>
-              <img src="/images/clinical-assessment-team-2026.jpeg" alt="Equipe Fisio Pro acompanhando uma avaliação funcional" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
+              <img src="/images/clinical-assessment-team-2026-v2.jpeg" alt="Equipe Fisio Pro acompanhando uma avaliação funcional" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
             </figure>
             <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden" data-reveal>
               <img src="/images/performance-treadmill-2026.jpeg" alt="Fisioterapeuta acompanhando um atleta em avaliação de performance" width="1280" height="854" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
