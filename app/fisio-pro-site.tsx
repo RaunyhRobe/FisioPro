@@ -114,6 +114,34 @@ const academyPillars = [
   ['Mentoria', 'Discussão de casos, raciocínio e desenvolvimento.'],
 ];
 
+const academyProducts = [
+  {
+    title: 'Fisio Pro Clinical Pack',
+    description: '5 guias essenciais para avaliação, raciocínio clínico e recursos terapêuticos.',
+    href: 'https://go.hotmart.com/D107332616U',
+  },
+  {
+    title: '50 Testes Ortopédicos Essenciais',
+    description: 'Um material prático da Fisio Pro Academy para apoiar avaliações mais completas.',
+    href: 'https://go.hotmart.com/B107331573B',
+  },
+  {
+    title: 'Lesões Musculares e suas Classificações',
+    description: 'Conteúdo direcionado à compreensão e classificação das lesões musculares.',
+    href: 'https://go.hotmart.com/H107258672J?dp=1',
+  },
+  {
+    title: 'Protocolo de Laser Terapêutico',
+    description: 'Dosimetria aplicada a patologias e uso clínico do laser terapêutico.',
+    href: 'https://go.hotmart.com/N107258552B?dp=1',
+  },
+  {
+    title: 'Protocolo de Ultrassom Terapêutico',
+    description: 'Uso direcionado do ultrassom para potencializar resultados na prática clínica.',
+    href: 'https://go.hotmart.com/W107234519I?dp=1',
+  },
+];
+
 const technologyItems = [
   {
     title: 'Testes objetivos',
@@ -383,7 +411,7 @@ export function FisioProSite() {
 
           <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2 md:gap-6">
             <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden" data-reveal>
-              <img src="/images/clinical-assessment-team-2026-v2.jpeg" alt="Equipe Fisio Pro acompanhando uma avaliação funcional" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
+              <img src="/images/clinical-technology-assessment-2026.jpg" alt="Fisioterapeuta utilizando tecnologia de avaliação e eletroestimulação em um paciente" width="1066" height="1600" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
             </figure>
             <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden" data-reveal>
               <img src="/images/performance-treadmill-2026.jpeg" alt="Fisioterapeuta acompanhando um atleta em avaliação de performance" width="1280" height="854" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
@@ -426,10 +454,10 @@ export function FisioProSite() {
       <section className="immersive-story relative h-[100svh] bg-black text-white">
         <div className="relative h-[100svh] overflow-hidden">
           <img
-            src="/images/immersive-return-2026.jpeg"
-            alt="Atleta em exercício funcional de retorno ao esporte com acompanhamento fisioterapêutico"
-            width="1066"
-            height="1600"
+            src="/images/immersive-compression-recovery-2026.jpg"
+            alt="Paciente em sessão de recuperação com botas de compressão e acompanhamento fisioterapêutico"
+            width="854"
+            height="1280"
             loading="lazy"
             decoding="async"
             className="immersive-image absolute inset-0 h-full w-full object-cover"
@@ -613,9 +641,9 @@ export function FisioProSite() {
                 </figure>
 
                 <div className="flex flex-1 flex-col border-t border-black pt-5 md:pt-6">
-                  <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
-                    <h3 className="text-[clamp(2rem,3.7vw,4.35rem)] font-medium leading-[.95] tracking-[-0.055em]">{member.name}</h3>
-                    <p className="max-w-[18rem] text-[11px] font-semibold uppercase tracking-[0.14em] text-black/48 xl:text-right">{member.role}</p>
+                  <div>
+                    <h3 className="max-w-[12ch] text-[clamp(2rem,3.15vw,3.75rem)] font-medium leading-[.95] tracking-[-0.055em]">{member.name}</h3>
+                    <p className="mt-4 max-w-[34rem] text-[11px] font-semibold uppercase leading-5 tracking-[0.14em] text-black/48">{member.role}</p>
                   </div>
 
                   <p className="mt-6 max-w-xl font-serif text-[clamp(1.45rem,2.1vw,2.25rem)] italic leading-[1.15] tracking-[-0.025em] text-black/78">{member.tagline}</p>
@@ -671,6 +699,30 @@ export function FisioProSite() {
                   <p className="col-start-2 text-sm leading-6 text-black/55 md:col-start-auto">{text}</p>
                 </div>
               ))}
+            </div>
+            <div className="mt-12" data-reveal>
+              <div className="flex items-end justify-between gap-6 border-b border-black pb-4">
+                <h3 className="text-2xl font-medium tracking-[-0.035em] md:text-3xl">Cursos e materiais</h3>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-black/42">Hotmart</span>
+              </div>
+              <div>
+                {academyProducts.map((product, index) => (
+                  <a
+                    key={product.href}
+                    href={product.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group grid grid-cols-[34px_1fr_auto] gap-3 border-b border-black/20 py-5 transition-colors duration-300 hover:bg-black hover:px-4 hover:text-white md:grid-cols-[42px_1fr_auto] md:gap-5"
+                  >
+                    <span className="pt-1 text-[10px] font-semibold tracking-[0.12em] text-black/35 transition-colors group-hover:text-white/55">{String(index + 1).padStart(2, '0')}</span>
+                    <span>
+                      <strong className="block text-base font-medium leading-6 md:text-lg">{product.title}</strong>
+                      <span className="mt-1.5 block max-w-xl text-sm leading-6 text-black/55 transition-colors group-hover:text-white/65">{product.description}</span>
+                    </span>
+                    <ArrowUpRight className="mt-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" aria-hidden="true" />
+                  </a>
+                ))}
+              </div>
             </div>
             <div className="mt-9" data-reveal>
               <ArrowLink href={academyInstagram}>Conhecer a Fisio Pro Academy</ArrowLink>
