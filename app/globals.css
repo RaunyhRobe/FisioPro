@@ -205,16 +205,12 @@ body.intro-lock { overflow: hidden; }
 .motion-ready [data-reveal].is-visible { opacity: 1; transform: translateY(0); }
 
 .method-visual img,
-.media-reveal img,
 .specialty-card img,
-.team-portrait img,
 .academy-logo {
   transition: transform 1.05s cubic-bezier(.22,.75,.22,1), filter .7s ease;
 }
 .method-visual:hover img,
-.media-reveal:hover img,
-.specialty-card:hover img,
-.team-portrait:hover img { transform: scale(1.035); }
+.specialty-card:hover img { transform: scale(1.035); }
 
 .specialty-card { min-width: 0; }
 .journey-row { transition: padding-left .45s ease, background-color .45s ease; }
@@ -235,7 +231,7 @@ body.intro-lock { overflow: hidden; }
 
 .immersive-image {
   object-position: 50% center;
-  transform: scale(1.015);
+  transform: none;
 }
 .immersive-shade {
   background:
@@ -356,9 +352,7 @@ body.intro-lock { overflow: hidden; }
 
 @media (hover: none) {
   .method-visual:hover img,
-  .media-reveal:hover img,
-  .specialty-card:hover img,
-  .team-portrait:hover img { transform: none; }
+  .specialty-card:hover img { transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

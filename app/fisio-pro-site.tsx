@@ -410,11 +410,11 @@ export function FisioProSite() {
           </div>
 
           <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2 md:gap-6">
-            <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden" data-reveal>
-              <img src="/images/clinical-technology-assessment-2026.jpg" alt="Fisioterapeuta utilizando tecnologia de avaliação e eletroestimulação em um paciente" width="1066" height="1600" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
+            <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden bg-black" data-reveal>
+              <img src="/images/clinical-technology-assessment-2026.jpg" alt="Fisioterapeuta utilizando tecnologia de avaliação e eletroestimulação em um paciente" width="1066" height="1600" loading="lazy" decoding="async" className="h-full w-full object-cover object-center md:object-contain" />
             </figure>
-            <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden" data-reveal>
-              <img src="/images/performance-treadmill-2026.jpeg" alt="Fisioterapeuta acompanhando um atleta em avaliação de performance" width="1280" height="854" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
+            <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden bg-black" data-reveal>
+              <img src="/images/performance-treadmill-2026.jpeg" alt="Fisioterapeuta acompanhando um atleta em avaliação de performance" width="1280" height="854" loading="lazy" decoding="async" className="h-full w-full object-cover object-center md:object-contain" />
             </figure>
           </div>
         </div>
@@ -460,7 +460,7 @@ export function FisioProSite() {
             height="1280"
             loading="lazy"
             decoding="async"
-            className="immersive-image absolute inset-0 h-full w-full object-cover"
+            className="immersive-image absolute inset-0 h-full w-full object-cover md:object-contain"
           />
           <div className="immersive-shade absolute inset-0" />
           <div className="relative z-10 flex h-full flex-col justify-between px-5 py-7 md:px-10 md:py-10 lg:px-14">
@@ -624,7 +624,7 @@ export function FisioProSite() {
           <div className="mt-14 grid gap-x-6 gap-y-14 md:mt-20 md:grid-cols-2 lg:gap-x-10 lg:gap-y-20">
             {teamMembers.map((member, index) => (
               <article key={member.name} className="flex h-full flex-col" data-reveal>
-                <figure className="team-portrait relative aspect-[4/3] min-h-0 overflow-hidden bg-black md:aspect-[16/10]">
+                <figure className="team-portrait relative aspect-[4/3] min-h-0 overflow-hidden bg-[#f3f3f1]">
                   <img
                     src={member.image}
                     alt={member.alt}
@@ -632,7 +632,7 @@ export function FisioProSite() {
                     height={member.imageHeight}
                     loading="lazy"
                     decoding="async"
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover md:object-contain"
                     style={{ objectPosition: member.objectPosition }}
                   />
                   <span className="absolute right-5 top-5 grid h-10 w-10 place-items-center rounded-full bg-black text-[10px] font-semibold text-white">
@@ -642,7 +642,7 @@ export function FisioProSite() {
 
                 <div className="flex flex-1 flex-col border-t border-black pt-5 md:pt-6">
                   <div>
-                    <h3 className="max-w-[12ch] text-[clamp(2rem,3.15vw,3.75rem)] font-medium leading-[.95] tracking-[-0.055em]">{member.name}</h3>
+                    <h3 className="whitespace-nowrap text-[clamp(1.8rem,2.7vw,3.4rem)] font-medium leading-[.95] tracking-[-0.055em]">{member.name}</h3>
                     <p className="mt-4 max-w-[34rem] text-[11px] font-semibold uppercase leading-5 tracking-[0.14em] text-black/48">{member.role}</p>
                   </div>
 
