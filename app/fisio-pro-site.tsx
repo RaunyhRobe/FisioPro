@@ -22,7 +22,7 @@ const googleMaps =
   'https://maps.google.com/maps/place//data=!4m2!3m1!1s0x94cf2fa64a030c7d:0xc510b059950b33a4?entry=s&sa=X&ved=2ahUKEwixgPmP_N6WAxWWPrkGHVJcE-sQ4kB6BAgVEAA&hl=pt';
 
 const instagram = 'https://www.instagram.com/fisiopro019/';
-const academyInstagram = 'https://www.instagram.com/fisiopro.academy/';
+const academyInstagram = 'https://www.instagram.com/fisiopro.academy?stkn=MmJuZXV0Y2FiZzI0';
 
 const teamMembers = [
   {
@@ -426,8 +426,8 @@ export function FisioProSite() {
       <section className="immersive-story relative h-[100svh] bg-black text-white">
         <div className="relative h-[100svh] overflow-hidden">
           <img
-            src="/images/sports-return-2026.jpeg"
-            alt="Reabilitação esportiva com exercício específico e resistência"
+            src="/images/immersive-return-2026.jpeg"
+            alt="Atleta em exercício funcional de retorno ao esporte com acompanhamento fisioterapêutico"
             width="1066"
             height="1600"
             loading="lazy"
