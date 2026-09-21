@@ -36,14 +36,6 @@
   --border: rgba(11, 11, 11, 0.16);
   --ring: #0b0b0b;
   --radius: 0.25rem;
-  --hero-shift: 0px;
-  --scene-progress: 0;
-  --scene-scale: 1.02;
-  --scene-shift: 0px;
-  --scene-copy-shift: 22px;
-  --scene-opacity: .58;
-  --scene-kicker-opacity: .42;
-  --scene-progress-width: 0%;
 }
 
 .dark {
@@ -155,11 +147,10 @@ body.intro-lock { overflow: hidden; }
 
 .hero-v2 { isolation: isolate; }
 .hero-media {
-  min-height: calc(100% + 7rem);
-  transform: translateY(var(--hero-shift)) scale(1.045);
+  min-height: 100%;
+  transform: scale(1.02);
   transform-origin: center;
   object-position: center;
-  will-change: transform;
   animation: hero-focus 1.65s 1.58s cubic-bezier(.2,.7,.2,1) both;
 }
 
@@ -244,8 +235,7 @@ body.intro-lock { overflow: hidden; }
 
 .immersive-image {
   object-position: 50% center;
-  transform: scale(var(--scene-scale)) translateY(var(--scene-shift));
-  will-change: transform;
+  transform: scale(1.015);
 }
 .immersive-shade {
   background:
@@ -253,11 +243,11 @@ body.intro-lock { overflow: hidden; }
     linear-gradient(90deg, rgba(0,0,0,.28), transparent 60%);
 }
 .immersive-title {
-  opacity: var(--scene-opacity);
-  transform: translateY(var(--scene-copy-shift));
+  opacity: 1;
+  transform: none;
 }
-.immersive-kicker { opacity: var(--scene-kicker-opacity); }
-.scene-progress { width: var(--scene-progress-width); transition: width .08s linear; }
+.immersive-kicker { opacity: 1; }
+.scene-progress { width: 100%; }
 
 .space-gallery {
   scrollbar-width: none;
@@ -327,8 +317,8 @@ body.intro-lock { overflow: hidden; }
 @keyframes header-enter { from { opacity: 0; transform: translateY(-1rem); } to { opacity: 1; transform: translateY(0); } }
 @keyframes copy-enter { from { opacity: 0; transform: translateY(2rem); } to { opacity: 1; transform: translateY(0); } }
 @keyframes hero-focus {
-  from { opacity: .45; filter: saturate(.35); transform: translateY(var(--hero-shift)) scale(1.12); }
-  to { opacity: 1; filter: saturate(1); transform: translateY(var(--hero-shift)) scale(1.045); }
+  from { opacity: .45; filter: saturate(.35); transform: scale(1.07); }
+  to { opacity: 1; filter: saturate(1); transform: scale(1.02); }
 }
 @keyframes marquee {
   from { transform: translate3d(0, 0, 0); }
@@ -358,7 +348,7 @@ body.intro-lock { overflow: hidden; }
   .method-visual img { object-position: 50% center; }
   .immersive-image { object-position: 56% center; }
   .journey-row:hover { padding-left: 0; }
-  .team-portrait { min-height: 66svh; height: 66svh; }
+  .team-portrait { min-height: 0; height: auto; }
   .academy-logo { max-height: 290px; width: auto; }
   .footer-v2 { padding-bottom: 6.5rem; }
   .whatsapp-float { right: 1rem; }

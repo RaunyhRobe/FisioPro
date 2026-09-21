@@ -1,8 +1,6 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import Lenis from 'lenis';
-import 'lenis/dist/lenis.css';
+import { useEffect, useRef, useState } from 'react';
 import {
   ArrowUpRight,
   AtSign,
@@ -18,30 +16,64 @@ import {
 import { Button } from '@/components/ui/button';
 
 const whatsapp =
-  'https://wa.me/5519971282430?text=Olá%2C%20gostaria%20de%20agendar%20uma%20avaliação%20na%20Fisio%20Pro.';
+  'https://wa.me/5519971265215?text=Olá%2C%20gostaria%20de%20agendar%20uma%20avaliação%20na%20Fisio%20Pro.';
 
 const googleMaps =
   'https://maps.google.com/maps/place//data=!4m2!3m1!1s0x94cf2fa64a030c7d:0xc510b059950b33a4?entry=s&sa=X&ved=2ahUKEwixgPmP_N6WAxWWPrkGHVJcE-sQ4kB6BAgVEAA&hl=pt';
 
-const instagram = 'https://www.instagram.com/fisiopro19/';
+const instagram = 'https://www.instagram.com/fisiopro019/';
+const academyInstagram = 'https://www.instagram.com/fisiopro.academy/';
 
 const teamMembers = [
   {
-    name: 'Guilherme',
-    role: 'Fisioterapeuta',
-    image: '/images/team-guilherme-2026.jpeg',
-    alt: 'Guilherme, fisioterapeuta da equipe Fisio Pro',
+    name: 'Dr. Guilherme Lira',
+    role: 'Fisioterapeuta e gestor da Fisio Pro',
+    tagline: 'Movimento, precisão e performance aplicados à reabilitação.',
+    bio: 'Fisioterapeuta com sólida experiência em reabilitação ortopédica e esportiva, prevenção de lesões e desenvolvimento de performance. Sua atuação combina conhecimento científico, experiência clínica e estratégias individualizadas para proporcionar uma recuperação segura, eficiente e orientada a resultados.',
+    image: '/images/team-guilherme-lira.png',
+    imageWidth: 1280,
+    imageHeight: 854,
+    alt: 'Dr. Guilherme Lira, fisioterapeuta e gestor da Fisio Pro',
+    objectPosition: '50% 38%',
     formations: [
-      'Especialista em Fisioterapia Esportiva',
-      'Especialista em Eletroterapia de Alta Performance',
+      'Graduação em Fisioterapia',
+      'Pós-graduação em Ortopedia Multiprofissional — Hospital Israelita Albert Einstein',
+      'Pós-graduação em Eletroterapia de Alta Performance',
+      'Formação em Terapia Manipulativa Ortopédica',
+      'Formação FIFA 11+ — prevenção de lesões no futebol',
+      'Aperfeiçoamentos em ortopedia, esporte, performance e reabilitação',
     ],
+    experience: [
+      'Coordenador do Núcleo de Excelência em Performance e Prevenção de clube de futebol profissional por dois anos',
+      'Gestor da Fisio Pro',
+      'Ampla experiência na reabilitação de lesões ortopédicas e esportivas',
+      'Professor e ministrante de cursos para profissionais da saúde',
+    ],
+    expertise: 'Reabilitação ortopédica · Fisioterapia esportiva · Prevenção de lesões · Performance · Eletroterapia · Retorno ao esporte',
   },
   {
-    name: 'Giovanni',
+    name: 'Dr. Matheus Kertis',
     role: 'Fisioterapeuta',
-    image: '/images/team-giovanni-2026.jpeg',
-    alt: 'Giovanni, fisioterapeuta da equipe Fisio Pro',
-    formations: [] as string[],
+    tagline: 'Experiência clínica e precisão para uma reabilitação segura e eficiente.',
+    bio: 'Fisioterapeuta com ampla experiência em reabilitação ortopédica, traumato-ortopédica e esportiva, com atuação direcionada à recuperação funcional e ao retorno seguro às atividades. Sua abordagem integra conhecimento técnico, experiência clínica e estratégias individualizadas em cada etapa do processo de reabilitação.',
+    image: '/images/team-matheus-kertis.jpg',
+    imageWidth: 1066,
+    imageHeight: 1600,
+    alt: 'Dr. Matheus Kertis, fisioterapeuta da equipe Fisio Pro',
+    objectPosition: '50% 27%',
+    formations: [
+      'Graduação em Fisioterapia',
+      'Especialização em Fisioterapia Esportiva',
+      'Aperfeiçoamentos em reabilitação ortopédica, traumato-ortopédica e esportiva',
+      'Experiência em protocolos de recuperação funcional e retorno ao esporte',
+    ],
+    experience: [
+      'Ampla atuação em reabilitação ortopédica e traumato-ortopédica',
+      'Experiência na reabilitação de lesões esportivas',
+      'Sólida experiência em pós-operatórios ortopédicos',
+      'Atuação na recuperação funcional e no retorno seguro às atividades',
+    ],
+    expertise: 'Reabilitação ortopédica · Traumato-ortopedia · Fisioterapia esportiva · Pós-operatório · Recuperação funcional · Retorno ao esporte',
   },
 ];
 
@@ -137,29 +169,6 @@ export function FisioProSite() {
   const [openTechnology, setOpenTechnology] = useState<number | null>(0);
   const galleryRef = useRef<HTMLDivElement>(null);
 
-  useLayoutEffect(() => {
-    if ('scrollRestoration' in window.history) {
-      window.history.scrollRestoration = 'manual';
-    }
-
-    if (window.location.hash) {
-      window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}`);
-    }
-
-    const resetToTop = () => window.scrollTo(0, 0);
-    resetToTop();
-    let secondFrame = 0;
-    const firstFrame = window.requestAnimationFrame(() => {
-      resetToTop();
-      secondFrame = window.requestAnimationFrame(resetToTop);
-    });
-
-    return () => {
-      window.cancelAnimationFrame(firstFrame);
-      window.cancelAnimationFrame(secondFrame);
-    };
-  }, []);
-
   useEffect(() => {
     const introTimer = window.setTimeout(() => setIntroDone(true), 1650);
     return () => window.clearTimeout(introTimer);
@@ -199,52 +208,11 @@ export function FisioProSite() {
       revealItems.forEach((item) => item.classList.add('is-visible'));
     }
 
-    const updateScrollEffects = () => {
-      const y = window.scrollY;
-      root.style.setProperty('--hero-shift', `${Math.min(y * 0.09, 90)}px`);
-      const scene = document.querySelector<HTMLElement>('[data-immersive]');
-      if (scene) {
-        const rect = scene.getBoundingClientRect();
-        const travel = Math.max(1, rect.height - window.innerHeight);
-        const progress = Math.min(1, Math.max(0, -rect.top / travel));
-        scene.style.setProperty('--scene-progress', progress.toFixed(3));
-        scene.style.setProperty('--scene-scale', (1.02 + progress * 0.08).toFixed(3));
-        scene.style.setProperty('--scene-shift', `${(progress * -20).toFixed(1)}px`);
-        scene.style.setProperty('--scene-copy-shift', `${((1 - progress) * 22).toFixed(1)}px`);
-        scene.style.setProperty('--scene-opacity', (0.58 + progress * 0.42).toFixed(3));
-        scene.style.setProperty('--scene-kicker-opacity', (0.42 + progress * 0.58).toFixed(3));
-        scene.style.setProperty('--scene-progress-width', `${(progress * 100).toFixed(1)}%`);
-      }
-    };
-
-    let lenis: Lenis | undefined;
-    let animationFrame = 0;
-    if (!reduceMotion) {
-      lenis = new Lenis({
-        duration: 1.05,
-        smoothWheel: true,
-        anchors: true,
-        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      });
-      lenis.on('scroll', updateScrollEffects);
-      const raf = (time: number) => {
-        lenis?.raf(time);
-        animationFrame = requestAnimationFrame(raf);
-      };
-      animationFrame = requestAnimationFrame(raf);
-    } else {
-      window.addEventListener('scroll', updateScrollEffects, { passive: true });
-    }
-
-    updateScrollEffects();
     return () => {
       observer?.disconnect();
       window.clearTimeout(revealFallback);
       revealItems.forEach((item) => item.classList.remove('is-visible', 'reveal-pending'));
       root.classList.remove('motion-ready');
-      window.removeEventListener('scroll', updateScrollEffects);
-      cancelAnimationFrame(animationFrame);
-      lenis?.destroy();
     };
   }, []);
 
@@ -415,10 +383,10 @@ export function FisioProSite() {
 
           <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-2 md:gap-6">
             <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden" data-reveal>
-              <img src="/images/team-action.jpeg" alt="Equipe Fisio Pro reunida no ambiente de treinamento" width="1600" height="1066" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
+              <img src="/images/clinical-assessment-team-2026.jpeg" alt="Equipe Fisio Pro acompanhando uma avaliação funcional" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
             </figure>
             <figure className="media-reveal h-[52svh] min-h-[420px] max-h-[680px] overflow-hidden" data-reveal>
-              <img src="/images/performance-assessment.jpeg" alt="Atleta realizando teste funcional acompanhado por fisioterapeutas" width="1600" height="1066" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
+              <img src="/images/performance-treadmill-2026.jpeg" alt="Fisioterapeuta acompanhando um atleta em avaliação de performance" width="1280" height="854" loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
             </figure>
           </div>
         </div>
@@ -455,10 +423,10 @@ export function FisioProSite() {
         </div>
       </section>
 
-      <section className="immersive-story relative h-[100svh] bg-black text-white" data-immersive>
-        <div className="sticky top-0 h-[100svh] overflow-hidden">
+      <section className="immersive-story relative h-[100svh] bg-black text-white">
+        <div className="relative h-[100svh] overflow-hidden">
           <img
-            src="/images/sports-rehab.jpeg"
+            src="/images/sports-return-2026.jpeg"
             alt="Reabilitação esportiva com exercício específico e resistência"
             width="1066"
             height="1600"
@@ -546,13 +514,13 @@ export function FisioProSite() {
 
           <div className="mt-14 grid gap-3 sm:grid-cols-3 md:mt-20 md:gap-5">
             <figure className="media-reveal h-[420px] overflow-hidden md:h-[560px] lg:h-[620px]" data-reveal>
-              <img src="/images/electrostimulation.jpeg" alt="Tecnologia de eletroestimulação aplicada ao membro inferior" width="1066" height="1600" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+              <img src="/images/clinical-device-2026.jpeg" alt="Tecnologia de avaliação aplicada durante o atendimento" width="1066" height="1600" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             </figure>
             <figure className="media-reveal h-[420px] overflow-hidden md:h-[560px] lg:h-[620px]" data-reveal>
-              <img src="/images/tecare-treatment.jpeg" alt="TECARE FISIO integrada às técnicas manuais" width="1066" height="1600" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+              <img src="/images/therapy-equipment-2026.jpeg" alt="Equipamentos de eletroterapia e laser utilizados pela Fisio Pro" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             </figure>
             <figure className="media-reveal h-[420px] overflow-hidden md:h-[560px] lg:h-[620px]" data-reveal>
-              <img src="/images/objective-tests.jpeg" alt="Acompanhamento de testes objetivos em tempo real" width="1066" height="1600" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+              <img src="/images/laser-treatment-2026.jpeg" alt="Aplicação de laser terapêutico no pé de um paciente" width="854" height="1280" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             </figure>
           </div>
         </div>
@@ -580,10 +548,10 @@ export function FisioProSite() {
 
         <div ref={galleryRef} className="space-gallery mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 md:mt-20 md:gap-6 md:px-10 lg:px-14">
           {[
-            ['/images/studio-panorama.jpeg', 'Vista panorâmica da estrutura Fisio Pro'],
-            ['/images/studio-wide.jpeg', 'Área completa de treinamento da Fisio Pro'],
-            ['/images/space-bw.jpeg', 'Detalhes dos equipamentos de treinamento'],
-            ['/images/studio-ground.jpeg', 'Estrutura funcional vista ao nível do solo'],
+            ['/images/space-hero-2026.jpeg', 'Vista panorâmica da estrutura Fisio Pro'],
+            ['/images/space-wide-2026.jpeg', 'Área completa de treinamento da Fisio Pro'],
+            ['/images/space-equipment-2026.jpeg', 'Equipamentos funcionais organizados no espaço de treinamento'],
+            ['/images/space-bike-2026.jpeg', 'Bicicleta e equipamentos de preparação física da Fisio Pro'],
           ].map(([src, alt], index) => (
             <figure key={src} className={`gallery-slide media-reveal relative h-[62svh] min-h-[460px] shrink-0 snap-center overflow-hidden ${
               index % 2 ? 'w-[72vw] md:w-[48vw]' : 'w-[86vw] md:w-[62vw]'
@@ -610,38 +578,54 @@ export function FisioProSite() {
           </div>
           <div className="mt-14 grid gap-x-6 gap-y-14 md:mt-20 md:grid-cols-2 lg:gap-x-10 lg:gap-y-20">
             {teamMembers.map((member, index) => (
-              <article key={member.name} className={index % 2 ? 'md:mt-20' : ''} data-reveal>
-                <figure className="team-portrait relative aspect-[4/5] min-h-0 overflow-hidden bg-black">
+              <article key={member.name} className="flex h-full flex-col" data-reveal>
+                <figure className="team-portrait relative aspect-[4/3] min-h-0 overflow-hidden bg-black md:aspect-[16/10]">
                   <img
                     src={member.image}
                     alt={member.alt}
-                    width="1066"
-                    height="1600"
+                    width={member.imageWidth}
+                    height={member.imageHeight}
                     loading="lazy"
                     decoding="async"
-                    className="h-full w-full object-cover object-center"
+                    className="h-full w-full object-cover"
+                    style={{ objectPosition: member.objectPosition }}
                   />
                   <span className="absolute right-5 top-5 grid h-10 w-10 place-items-center rounded-full bg-black text-[10px] font-semibold text-white">
                     {String(index + 1).padStart(2, '0')}
                   </span>
                 </figure>
 
-                <div className="border-t border-black pt-5 md:pt-6">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                    <h3 className="text-[clamp(2rem,4vw,4.5rem)] font-medium leading-none tracking-[-0.055em]">{member.name}</h3>
-                    <p className="text-sm font-semibold uppercase tracking-[0.14em] text-black/48">{member.role}</p>
+                <div className="flex flex-1 flex-col border-t border-black pt-5 md:pt-6">
+                  <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
+                    <h3 className="text-[clamp(2rem,3.7vw,4.35rem)] font-medium leading-[.95] tracking-[-0.055em]">{member.name}</h3>
+                    <p className="max-w-[18rem] text-[11px] font-semibold uppercase tracking-[0.14em] text-black/48 xl:text-right">{member.role}</p>
                   </div>
 
-                  {member.formations.length > 0 && (
-                    <div className="mt-7 grid gap-3 border-t border-black/15 pt-5 sm:grid-cols-[9rem_1fr]">
-                      <p className="text-sm font-semibold uppercase tracking-[0.14em] text-black/45">Formações</p>
-                      <ul className="space-y-2 text-base leading-7 text-black/68">
-                        {member.formations.map((formation) => (
-                          <li key={formation} className="border-b border-black/10 pb-2">{formation}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                  <p className="mt-6 max-w-xl font-serif text-[clamp(1.45rem,2.1vw,2.25rem)] italic leading-[1.15] tracking-[-0.025em] text-black/78">{member.tagline}</p>
+                  <p className="mt-5 max-w-2xl text-base leading-8 text-black/62">{member.bio}</p>
+
+                  <div className="mt-7 grid gap-3 border-t border-black/15 pt-5 sm:grid-cols-[9rem_1fr]">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-black/45">Formação & especializações</p>
+                    <ul className="space-y-2 text-[15px] leading-7 text-black/68">
+                      {member.formations.map((formation) => (
+                        <li key={formation} className="border-b border-black/10 pb-2">{formation}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="mt-7 grid gap-3 border-t border-black/15 pt-5 sm:grid-cols-[9rem_1fr]">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-black/45">Experiência</p>
+                    <ul className="space-y-2 text-[15px] leading-7 text-black/68">
+                      {member.experience.map((item) => (
+                        <li key={item} className="border-b border-black/10 pb-2">{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="mt-auto border-t border-black/15 pt-5">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-black/45">Áreas de expertise</p>
+                    <p className="mt-3 text-sm leading-7 text-black/68">{member.expertise}</p>
+                  </div>
                 </div>
               </article>
             ))}
@@ -672,7 +656,7 @@ export function FisioProSite() {
               ))}
             </div>
             <div className="mt-9" data-reveal>
-              <ArrowLink href={`${whatsapp}%20Também%20quero%20saber%20sobre%20a%20Fisio%20Pro%20Academy.`}>Receber novidades da Academy</ArrowLink>
+              <ArrowLink href={academyInstagram}>Conhecer a Fisio Pro Academy</ArrowLink>
             </div>
           </div>
         </div>
@@ -709,17 +693,17 @@ export function FisioProSite() {
             <div className="grid gap-3 sm:grid-cols-2">
               <a href={whatsapp} target="_blank" rel="noreferrer" className="footer-contact-card group">
                 <MessageCircle className="h-5 w-5" aria-hidden="true" />
-                <span><small>Agende pelo WhatsApp</small><strong>(19) 97128-2430</strong></span>
+                <span><small>Agende pelo WhatsApp</small><strong>(19) 97126-5215</strong></span>
                 <ArrowUpRight className="ml-auto h-4 w-4 opacity-45 transition group-hover:opacity-100" aria-hidden="true" />
               </a>
-              <a href="tel:+5519971282430" className="footer-contact-card group">
+              <a href="tel:+5519971265215" className="footer-contact-card group">
                 <Phone className="h-5 w-5" aria-hidden="true" />
                 <span><small>Prefere ligar?</small><strong>Fale com a clínica</strong></span>
                 <ArrowUpRight className="ml-auto h-4 w-4 opacity-45 transition group-hover:opacity-100" aria-hidden="true" />
               </a>
               <a href={instagram} target="_blank" rel="noreferrer" className="footer-contact-card group">
                 <AtSign className="h-5 w-5" aria-hidden="true" />
-                <span><small>Acompanhe nosso trabalho</small><strong>Instagram @fisiopro19</strong></span>
+                <span><small>Acompanhe nosso trabalho</small><strong>Instagram @fisiopro019</strong></span>
                 <ArrowUpRight className="ml-auto h-4 w-4 opacity-45 transition group-hover:opacity-100" aria-hidden="true" />
               </a>
               <a href={googleMaps} target="_blank" rel="noreferrer" className="footer-contact-card group">
