@@ -535,28 +535,45 @@ export function FisioProSite() {
                 Espaço para o corpo reencontrar confiança.
               </h2>
             </div>
-            <div className="flex gap-2" data-reveal>
-              <Button type="button" variant="ghost" className="h-11 w-11 rounded-full border border-white/25 p-0 text-white hover:bg-white hover:text-black" aria-label="Foto anterior" onClick={() => moveGallery(-1)}>
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button type="button" variant="ghost" className="h-11 w-11 rounded-full border border-white/25 p-0 text-white hover:bg-white hover:text-black" aria-label="Próxima foto" onClick={() => moveGallery(1)}>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+            <div className="max-w-md" data-reveal>
+              <p className="text-sm leading-7 text-white/58 md:text-base">
+                Estrutura ampla, recursos funcionais e liberdade para transformar cada fase da recuperação em movimento real.
+              </p>
+              <div className="mt-6 hidden gap-2 md:flex">
+                <Button type="button" variant="ghost" className="h-11 w-11 rounded-full border border-white/25 p-0 text-white hover:bg-white hover:text-black" aria-label="Foto anterior" onClick={() => moveGallery(-1)}>
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button type="button" variant="ghost" className="h-11 w-11 rounded-full border border-white/25 p-0 text-white hover:bg-white hover:text-black" aria-label="Próxima foto" onClick={() => moveGallery(1)}>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
 
-        <div ref={galleryRef} className="space-gallery mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 md:mt-20 md:gap-6 md:px-10 lg:px-14">
+        <div ref={galleryRef} className="space-gallery mt-10 grid grid-cols-2 gap-3 px-5 pb-4 md:mt-20 md:flex md:snap-x md:snap-mandatory md:gap-6 md:overflow-x-auto md:px-10 lg:px-14">
           {[
+            ['/images/hero-space.jpeg', 'Vista vertical da área ampla de treinamento da Fisio Pro'],
             ['/images/space-hero-2026.jpeg', 'Vista panorâmica da estrutura Fisio Pro'],
-            ['/images/space-wide-2026.jpeg', 'Área completa de treinamento da Fisio Pro'],
             ['/images/space-equipment-2026.jpeg', 'Equipamentos funcionais organizados no espaço de treinamento'],
             ['/images/space-bike-2026.jpeg', 'Bicicleta e equipamentos de preparação física da Fisio Pro'],
           ].map(([src, alt], index) => (
-            <figure key={src} className={`gallery-slide media-reveal relative h-[62svh] min-h-[460px] shrink-0 snap-center overflow-hidden ${
-              index % 2 ? 'w-[72vw] md:w-[48vw]' : 'w-[86vw] md:w-[62vw]'
+            <figure key={src} className={`gallery-slide media-reveal relative shrink-0 overflow-hidden md:h-[62svh] md:min-h-[460px] md:snap-center ${
+              index === 0
+                ? 'col-span-2 aspect-[3/4] md:aspect-auto md:w-[62vw]'
+                : index === 1
+                  ? 'col-span-2 aspect-[16/10] md:aspect-auto md:w-[48vw]'
+                  : 'col-span-1 aspect-[4/5] md:aspect-auto md:w-[42vw]'
             }`} data-reveal>
-              <img src={src} alt={alt} width="1280" height="854" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+              <img
+                src={src}
+                alt={alt}
+                width={index === 0 ? 854 : 1280}
+                height={index === 0 ? 1280 : 854}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
               <span className="absolute bottom-5 left-5 text-[9px] font-semibold uppercase tracking-[0.17em] text-white drop-shadow md:bottom-7 md:left-7">0{index + 1} / 04</span>
             </figure>
           ))}
